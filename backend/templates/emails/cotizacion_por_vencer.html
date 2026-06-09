@@ -1,0 +1,18 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<h2>📄 Cotizaciones próximas a vencer</h2>
+<p>Hola <strong>{{ usuario.first_name }}</strong>,</p>
+<p>Las siguientes cotizaciones están próximas a vencer en los próximos <strong>{{ dias }}</strong> días:</p>
+<table>
+  <tr><th>N° Cotización</th><th>Cliente</th><th>Total</th><th>Vence</th></tr>
+  {% for c in cotizaciones %}
+  <tr>
+    <td>{{ c.numero }}</td>
+    <td>{{ c.tercero.nombre }}</td>
+    <td>$ {{ c.total|floatformat:0 }}</td>
+    <td>{{ c.fecha_vencimiento }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<a href="http://localhost:5173/cotizaciones" class="btn">Ver Cotizaciones</a>
+{% endblock %}

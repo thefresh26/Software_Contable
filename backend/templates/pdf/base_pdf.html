@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #333; }
+
+  /* ── Cabecera ── */
+  .header { display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 22px; border-bottom: 2px solid #2563eb; padding-bottom: 14px; }
+  .empresa-nombre { font-size: 20px; font-weight: bold; color: #1e3a5f; margin-bottom: 4px; }
+  .empresa-info { font-size: 10px; color: #666; line-height: 1.6; }
+  .documento-titulo { text-align: right; }
+  .documento-tipo { font-size: 13px; font-weight: bold; color: #1e3a5f;
+                    text-transform: uppercase; letter-spacing: 0.5px; }
+  .documento-numero { font-size: 20px; font-weight: bold; color: #2563eb; margin: 4px 0; }
+  .documento-fecha { font-size: 10px; color: #555; line-height: 1.7; }
+
+  /* ── Badges de estado ── */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px;
+           font-size: 10px; font-weight: bold; margin-top: 5px; }
+  .estado-emitida  { background: #dcfce7; color: #166534; }
+  .estado-aprobada { background: #dcfce7; color: #166534; }
+  .estado-borrador { background: #fef9c3; color: #854d0e; }
+  .estado-pendiente{ background: #fef9c3; color: #854d0e; }
+  .estado-enviada  { background: #dbeafe; color: #1e40af; }
+  .estado-anulada  { background: #fee2e2; color: #991b1b; }
+  .estado-rechazada{ background: #fee2e2; color: #991b1b; }
+  .estado-vencida  { background: #f1f5f9; color: #64748b; }
+
+  /* ── Boxes de datos ── */
+  .seccion-datos { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 12px; }
+  .datos-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+               padding: 12px; flex: 1; }
+  .datos-box h4 { font-size: 9px; text-transform: uppercase; color: #64748b;
+                  margin-bottom: 8px; letter-spacing: 0.8px; border-bottom: 1px solid #e2e8f0;
+                  padding-bottom: 4px; }
+  .datos-box p { margin-bottom: 3px; font-size: 11px; line-height: 1.5; }
+  .datos-box strong { color: #1e293b; }
+
+  /* ── Tabla de ítems ── */
+  table.items { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+  table.items thead { background: #1e3a5f; color: white; }
+  table.items thead th { padding: 8px 10px; text-align: left; font-size: 10px;
+                          text-transform: uppercase; letter-spacing: 0.3px; }
+  table.items tbody tr:nth-child(even) { background: #f8fafc; }
+  table.items tbody td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; font-size: 11px; }
+  table.items tfoot td { padding: 6px 10px; font-weight: bold; background: #f1f5f9; }
+
+  /* ── Totales ── */
+  .totales-wrapper { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+  .totales { width: 300px; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; }
+  .totales table { width: 100%; border-collapse: collapse; }
+  .totales td { padding: 6px 12px; font-size: 11px; }
+  .totales tr:nth-child(even) { background: #f8fafc; }
+  .totales .label { color: #555; }
+  .totales .valor { text-align: right; font-weight: 500; }
+  .totales .separator td { border-top: 1px solid #e2e8f0; padding-top: 8px; }
+  .totales .total-final { background: #1e3a5f !important; }
+  .totales .total-final td { color: white; font-weight: bold; font-size: 13px; padding: 9px 12px; }
+  .totales .retencion { color: #dc2626; }
+
+  /* ── Observaciones ── */
+  .observaciones { background: #f8fafc; border-left: 3px solid #2563eb;
+                   padding: 10px 14px; margin-bottom: 20px; font-size: 10px;
+                   color: #334155; border-radius: 0 4px 4px 0; }
+  .observaciones strong { display: block; margin-bottom: 4px; text-transform: uppercase;
+                           font-size: 9px; color: #64748b; letter-spacing: 0.5px; }
+
+  /* ── Sección retenciones ── */
+  .retenciones-section { margin-bottom: 20px; }
+  .retenciones-section h3 { font-size: 10px; text-transform: uppercase; color: #64748b;
+                             margin-bottom: 8px; letter-spacing: 0.5px; }
+  table.retenciones { width: 100%; border-collapse: collapse; }
+  table.retenciones thead { background: #fef2f2; }
+  table.retenciones thead th { padding: 6px 10px; font-size: 10px; color: #991b1b;
+                                text-align: left; text-transform: uppercase; }
+  table.retenciones tbody td { padding: 5px 10px; border-bottom: 1px solid #fecaca;
+                                font-size: 11px; }
+
+  /* ── Footer ── */
+  .footer { margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 12px;
+            font-size: 9px; color: #94a3b8; text-align: center; line-height: 1.7; }
+
+  /* ── Utilidades ── */
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .font-bold { font-weight: bold; }
+  .text-muted { color: #94a3b8; }
+  .mt-4 { margin-top: 16px; }
+
+  /* ── Página ── */
+  @page { margin: 1.5cm; size: A4; }
+</style>
+</head>
+<body>
+{% block content %}{% endblock %}
+</body>
+</html>

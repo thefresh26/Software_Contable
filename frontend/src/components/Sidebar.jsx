@@ -1,0 +1,182 @@
+import { useState, useEffect } from 'react'
+import { NavLink } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import api from '../api/client'
+
+const nav = [
+  { label: 'Dashboard', to: '/', icon: '📊' },
+  { label: 'Terceros', to: '/terceros', icon: '👥' },
+  { label: 'Inventario', to: '/inventario', icon: '📦' },
+  {
+    label: 'Ventas', icon: '🧾',
+    children: [
+      { label: 'Cotizaciones', to: '/cotizaciones' },
+      { label: 'Nueva Cotización', to: '/cotizaciones/nueva' },
+      { label: 'Facturas', to: '/facturacion' },
+      { label: 'Nueva Factura', to: '/facturacion/nueva' },
+    ],
+  },
+  {
+    label: 'Cartera', icon: '💳',
+    children: [
+      { label: 'Por Cobrar', to: '/cartera/por-cobrar' },
+      { label: 'Por Pagar', to: '/cartera/por-pagar' },
+      { label: 'Resumen', to: '/cartera/resumen' },
+    ],
+  },
+  {
+    label: 'Contabilidad', icon: '📒',
+    children: [
+      { label: 'Plan de Cuentas', to: '/contabilidad/puc' },
+      { label: 'Asientos', to: '/contabilidad/asientos' },
+      { label: 'Reportes', to: '/contabilidad/reportes' },
+      { label: 'Centros de Costo', to: '/contabilidad/centros-costo' },
+    ],
+  },
+  {
+    label: 'Presupuesto', icon: '📈',
+    children: [
+      { label: 'Presupuestos', to: '/presupuestos' },
+      { label: 'Nuevo Presupuesto', to: '/presupuestos/nuevo' },
+    ],
+  },
+  {
+    label: 'Activos Fijos', icon: '🏢',
+    children: [
+      { label: 'Activos', to: '/activos' },
+      { label: 'Nuevo Activo', to: '/activos/nuevo' },
+      { label: 'Reportes Activos', to: '/activos/reportes' },
+    ],
+  },
+  {
+    label: 'Nómina', icon: '💰',
+    children: [
+      { label: 'Empleados', to: '/nomina/empleados' },
+      { label: 'Liquidar Nómina', to: '/nomina/liquidar' },
+      { label: 'Historial', to: '/nomina/historial' },
+    ],
+  },
+  {
+    label: 'Bancos', icon: '🏦',
+    children: [
+      { label: 'Cuentas Bancarias', to: '/bancos/cuentas' },
+    ],
+  },
+  {
+    label: 'Configuración', icon: '⚙️',
+    children: [
+      { label: 'Empresas', to: '/empresas' },
+      { label: 'Notificaciones', to: '/notificaciones' },
+      { label: 'Config. Notificaciones', to: '/configuracion/notificaciones' },
+      { label: 'Usuarios', to: '/usuarios', roles: ['admin'] },
+      { label: 'Importar Datos', to: '/importar' },
+      { label: 'Centros de Costo', to: '/contabilidad/centros-costo' },
+    ],
+  },
+]
+
+const linkCls = ({ isActive }) =>
+  `flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${
+    isActive ? 'bg-blue-700 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+  }`
+
+function EmpresaSelector({ user, onCambiar }) {
+  const [empresas, setEmpresas] = useState([])
+  const [cambiando, setCambiando] = useState(false)
+
+  useEffect(() => {
+    api.get('/empresas/').then(({ data }) => {
+      const lista = Array.isArray(data) ? data : (data.results || [])
+      setEmpresas(lista)
+    }).catch(() => {})
+  }, [user?.empresa_activa])
+
+  async function handleChange(e) {
+    const id = e.target.value
+    if (!id || cambiando) return
+    setCambiando(true)
+    try {
+      await onCambiar(id)
+      window.location.reload()
+    } catch {
+      setCambiando(false)
+    }
+  }
+
+  if (empresas.length <= 1) {
+    return (
+      <p className="text-slate-400 text-xs truncate">
+        {user?.empresa_activa?.nombre || user?.empresa || 'Mi Empresa'}
+      </p>
+    )
+  }
+
+  return (
+    <select
+      className="w-full text-xs bg-slate-700 text-slate-200 border border-slate-600 rounded px-1 py-0.5 mt-0.5"
+      value={user?.empresa_activa?.id || ''}
+      onChange={handleChange}
+      disabled={cambiando}
+    >
+      {empresas.map(e => (
+        <option key={e.id} value={e.id}>{e.nombre}</option>
+      ))}
+    </select>
+  )
+}
+
+export default function Sidebar() {
+  const { user, logout, cambiarEmpresa } = useAuth()
+  const rol = user?.rol || 'auxiliar'
+
+  const puedeVer = (item) => {
+    if (!item.roles) return true
+    return item.roles.includes(rol) || user?.is_superuser
+  }
+
+  return (
+    <aside className="w-56 min-h-screen bg-slate-800 flex flex-col shrink-0">
+      <div className="px-4 py-4 border-b border-slate-700">
+        <p className="text-white font-bold text-lg">ContaApp</p>
+        <EmpresaSelector user={user} onCambiar={cambiarEmpresa} />
+        <span className="inline-block mt-1 text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">
+          {rol}
+        </span>
+      </div>
+
+      <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto text-sm">
+        {nav.map((item) => {
+          if (!puedeVer(item)) return null
+          if (item.children) {
+            const visibles = item.children.filter(puedeVer)
+            if (!visibles.length) return null
+            return (
+              <div key={item.label}>
+                <p className="px-3 pt-3 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  {item.icon} {item.label}
+                </p>
+                {visibles.map((child) => (
+                  <NavLink key={child.to} to={child.to} className={linkCls}>
+                    {child.label}
+                  </NavLink>
+                ))}
+              </div>
+            )
+          }
+          return (
+            <NavLink key={item.to} to={item.to} className={linkCls} end={item.to === '/'}>
+              {item.icon} {item.label}
+            </NavLink>
+          )
+        })}
+      </nav>
+
+      <div className="px-4 py-3 border-t border-slate-700">
+        <p className="text-slate-400 text-xs mb-1 truncate">{user?.username}</p>
+        <button onClick={logout} className="w-full text-left text-xs text-slate-400 hover:text-white">
+          Cerrar sesión →
+        </button>
+      </div>
+    </aside>
+  )
+}

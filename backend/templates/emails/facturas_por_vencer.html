@@ -1,0 +1,18 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<h2>⚠️ Facturas próximas a vencer</h2>
+<p>Hola <strong>{{ usuario.first_name }}</strong>,</p>
+<p>Las siguientes facturas están próximas a vencer en los próximos <strong>{{ dias }}</strong> días:</p>
+<table>
+  <tr><th>N° Factura</th><th>Cliente</th><th>Total</th><th>Vence</th></tr>
+  {% for f in facturas %}
+  <tr>
+    <td>{{ f.numero }}</td>
+    <td>{{ f.tercero.nombre }}</td>
+    <td>$ {{ f.total|floatformat:0 }}</td>
+    <td>{{ f.fecha_vencimiento }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<a href="http://localhost:5173/cartera/por-cobrar" class="btn">Ver Cartera</a>
+{% endblock %}

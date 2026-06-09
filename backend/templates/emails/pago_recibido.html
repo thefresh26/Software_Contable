@@ -1,0 +1,9 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<h2>💰 Pago recibido</h2>
+<p>Hola <strong>{{ usuario.first_name }}</strong>,</p>
+<div class="alert-box alert-baja">
+  <p style="margin:0">Se registró un pago de <strong>$ {{ pago.valor|floatformat:0 }}</strong> para la factura <strong>{{ pago.cuenta_cobrar.factura.numero }}</strong> de <strong>{{ pago.cuenta_cobrar.tercero.nombre }}</strong>.</p>
+</div>
+<a href="http://localhost:5173/cartera/por-cobrar" class="btn">Ver Cartera</a>
+{% endblock %}

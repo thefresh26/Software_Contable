@@ -1,0 +1,3135 @@
+[
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 1,
+    "fields": {
+      "codigo": "1",
+      "nombre": "Activo",
+      "tipo": "activo",
+      "padre": null,
+      "nivel": 1,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 2,
+    "fields": {
+      "codigo": "11",
+      "nombre": "Efectivo y equivalentes",
+      "tipo": "activo",
+      "padre": 1,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 3,
+    "fields": {
+      "codigo": "1105",
+      "nombre": "Caja",
+      "tipo": "activo",
+      "padre": 2,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 4,
+    "fields": {
+      "codigo": "110505",
+      "nombre": "Caja general",
+      "tipo": "activo",
+      "padre": 3,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 5,
+    "fields": {
+      "codigo": "110510",
+      "nombre": "Cajas menores",
+      "tipo": "activo",
+      "padre": 3,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 6,
+    "fields": {
+      "codigo": "1110",
+      "nombre": "Depósitos en instituciones financieras",
+      "tipo": "activo",
+      "padre": 2,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 7,
+    "fields": {
+      "codigo": "111005",
+      "nombre": "Bancos",
+      "tipo": "activo",
+      "padre": 6,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 8,
+    "fields": {
+      "codigo": "111010",
+      "nombre": "Cuentas de ahorro",
+      "tipo": "activo",
+      "padre": 6,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 9,
+    "fields": {
+      "codigo": "12",
+      "nombre": "Inversiones",
+      "tipo": "activo",
+      "padre": 1,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 10,
+    "fields": {
+      "codigo": "1205",
+      "nombre": "Acciones",
+      "tipo": "activo",
+      "padre": 9,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 11,
+    "fields": {
+      "codigo": "1210",
+      "nombre": "Cuotas o partes de interés social",
+      "tipo": "activo",
+      "padre": 9,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 12,
+    "fields": {
+      "codigo": "13",
+      "nombre": "Deudores",
+      "tipo": "activo",
+      "padre": 1,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 13,
+    "fields": {
+      "codigo": "1305",
+      "nombre": "Clientes",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 14,
+    "fields": {
+      "codigo": "130505",
+      "nombre": "Clientes nacionales",
+      "tipo": "activo",
+      "padre": 13,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 15,
+    "fields": {
+      "codigo": "1310",
+      "nombre": "Cuentas corrientes comerciales",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 16,
+    "fields": {
+      "codigo": "1320",
+      "nombre": "Deudores varios",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 17,
+    "fields": {
+      "codigo": "1330",
+      "nombre": "Anticipos y avances",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 18,
+    "fields": {
+      "codigo": "1335",
+      "nombre": "Depósitos",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 19,
+    "fields": {
+      "codigo": "1345",
+      "nombre": "Ingresos por cobrar",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 20,
+    "fields": {
+      "codigo": "1350",
+      "nombre": "Retención sobre contratos",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 21,
+    "fields": {
+      "codigo": "1355",
+      "nombre": "Anticipo de impuestos y contribuciones",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 22,
+    "fields": {
+      "codigo": "135510",
+      "nombre": "Retención en la fuente",
+      "tipo": "activo",
+      "padre": 21,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 23,
+    "fields": {
+      "codigo": "135515",
+      "nombre": "Impuesto a las ventas retenido",
+      "tipo": "activo",
+      "padre": 21,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 24,
+    "fields": {
+      "codigo": "135520",
+      "nombre": "Retención ICA",
+      "tipo": "activo",
+      "padre": 21,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 25,
+    "fields": {
+      "codigo": "1360",
+      "nombre": "Préstamos a trabajadores",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 26,
+    "fields": {
+      "codigo": "1380",
+      "nombre": "Deudores varios",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 27,
+    "fields": {
+      "codigo": "1399",
+      "nombre": "Provisión deudores",
+      "tipo": "activo",
+      "padre": 12,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 28,
+    "fields": {
+      "codigo": "14",
+      "nombre": "Inventarios",
+      "tipo": "activo",
+      "padre": 1,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 29,
+    "fields": {
+      "codigo": "1405",
+      "nombre": "Materias primas",
+      "tipo": "activo",
+      "padre": 28,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 30,
+    "fields": {
+      "codigo": "1410",
+      "nombre": "Productos en proceso",
+      "tipo": "activo",
+      "padre": 28,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 31,
+    "fields": {
+      "codigo": "1415",
+      "nombre": "Obras de construcción en curso",
+      "tipo": "activo",
+      "padre": 28,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 32,
+    "fields": {
+      "codigo": "1420",
+      "nombre": "Productos terminados",
+      "tipo": "activo",
+      "padre": 28,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 33,
+    "fields": {
+      "codigo": "1425",
+      "nombre": "Mercancías no fabricadas por la empresa",
+      "tipo": "activo",
+      "padre": 28,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 34,
+    "fields": {
+      "codigo": "142505",
+      "nombre": "Mercancías en existencia",
+      "tipo": "activo",
+      "padre": 33,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 35,
+    "fields": {
+      "codigo": "1430",
+      "nombre": "Materiales, repuestos y accesorios",
+      "tipo": "activo",
+      "padre": 28,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 36,
+    "fields": {
+      "codigo": "1435",
+      "nombre": "Inventarios en tránsito",
+      "tipo": "activo",
+      "padre": 28,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 37,
+    "fields": {
+      "codigo": "1440",
+      "nombre": "Cultivos en desarrollo",
+      "tipo": "activo",
+      "padre": 28,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 38,
+    "fields": {
+      "codigo": "1499",
+      "nombre": "Provisión para protección de inventarios",
+      "tipo": "activo",
+      "padre": 28,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 39,
+    "fields": {
+      "codigo": "15",
+      "nombre": "Propiedades, planta y equipo",
+      "tipo": "activo",
+      "padre": 1,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 40,
+    "fields": {
+      "codigo": "1504",
+      "nombre": "Terrenos",
+      "tipo": "activo",
+      "padre": 39,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 41,
+    "fields": {
+      "codigo": "1508",
+      "nombre": "Construcciones en curso",
+      "tipo": "activo",
+      "padre": 39,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 42,
+    "fields": {
+      "codigo": "1512",
+      "nombre": "Construcciones y edificaciones",
+      "tipo": "activo",
+      "padre": 39,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 43,
+    "fields": {
+      "codigo": "1516",
+      "nombre": "Maquinaria y equipo",
+      "tipo": "activo",
+      "padre": 39,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 44,
+    "fields": {
+      "codigo": "1520",
+      "nombre": "Equipo de oficina",
+      "tipo": "activo",
+      "padre": 39,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 45,
+    "fields": {
+      "codigo": "1524",
+      "nombre": "Equipo de computación y comunicación",
+      "tipo": "activo",
+      "padre": 39,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 46,
+    "fields": {
+      "codigo": "1528",
+      "nombre": "Equipo de transporte",
+      "tipo": "activo",
+      "padre": 39,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 47,
+    "fields": {
+      "codigo": "1592",
+      "nombre": "Depreciación acumulada",
+      "tipo": "activo",
+      "padre": 39,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 48,
+    "fields": {
+      "codigo": "16",
+      "nombre": "Intangibles",
+      "tipo": "activo",
+      "padre": 1,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 49,
+    "fields": {
+      "codigo": "1605",
+      "nombre": "Crédito mercantil",
+      "tipo": "activo",
+      "padre": 48,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 50,
+    "fields": {
+      "codigo": "1610",
+      "nombre": "Marcas",
+      "tipo": "activo",
+      "padre": 48,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 51,
+    "fields": {
+      "codigo": "1615",
+      "nombre": "Patentes",
+      "tipo": "activo",
+      "padre": 48,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 52,
+    "fields": {
+      "codigo": "1620",
+      "nombre": "Concesiones y franquicias",
+      "tipo": "activo",
+      "padre": 48,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 53,
+    "fields": {
+      "codigo": "17",
+      "nombre": "Diferidos",
+      "tipo": "activo",
+      "padre": 1,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 54,
+    "fields": {
+      "codigo": "1705",
+      "nombre": "Gastos pagados por anticipado",
+      "tipo": "activo",
+      "padre": 53,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 55,
+    "fields": {
+      "codigo": "1710",
+      "nombre": "Cargos diferidos",
+      "tipo": "activo",
+      "padre": 53,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 56,
+    "fields": {
+      "codigo": "19",
+      "nombre": "Otros activos",
+      "tipo": "activo",
+      "padre": 1,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 57,
+    "fields": {
+      "codigo": "1905",
+      "nombre": "De inversiones",
+      "tipo": "activo",
+      "padre": 56,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 58,
+    "fields": {
+      "codigo": "1910",
+      "nombre": "De propiedades planta y equipo",
+      "tipo": "activo",
+      "padre": 56,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 59,
+    "fields": {
+      "codigo": "2",
+      "nombre": "Pasivo",
+      "tipo": "pasivo",
+      "padre": null,
+      "nivel": 1,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 60,
+    "fields": {
+      "codigo": "21",
+      "nombre": "Obligaciones financieras",
+      "tipo": "pasivo",
+      "padre": 59,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 61,
+    "fields": {
+      "codigo": "2105",
+      "nombre": "Bancos nacionales",
+      "tipo": "pasivo",
+      "padre": 60,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 62,
+    "fields": {
+      "codigo": "2110",
+      "nombre": "Bancos del exterior",
+      "tipo": "pasivo",
+      "padre": 60,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 63,
+    "fields": {
+      "codigo": "2135",
+      "nombre": "Corporaciones financieras",
+      "tipo": "pasivo",
+      "padre": 60,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 64,
+    "fields": {
+      "codigo": "22",
+      "nombre": "Proveedores",
+      "tipo": "pasivo",
+      "padre": 59,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 65,
+    "fields": {
+      "codigo": "2205",
+      "nombre": "Proveedores nacionales",
+      "tipo": "pasivo",
+      "padre": 64,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 66,
+    "fields": {
+      "codigo": "220505",
+      "nombre": "Proveedores nacionales (subcuenta)",
+      "tipo": "pasivo",
+      "padre": 65,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 67,
+    "fields": {
+      "codigo": "2210",
+      "nombre": "Proveedores del exterior",
+      "tipo": "pasivo",
+      "padre": 64,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 68,
+    "fields": {
+      "codigo": "23",
+      "nombre": "Cuentas por pagar",
+      "tipo": "pasivo",
+      "padre": 59,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 69,
+    "fields": {
+      "codigo": "2305",
+      "nombre": "Cuentas corrientes comerciales",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 70,
+    "fields": {
+      "codigo": "2315",
+      "nombre": "A contratistas",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 71,
+    "fields": {
+      "codigo": "2320",
+      "nombre": "Instalamentos por pagar",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 72,
+    "fields": {
+      "codigo": "2335",
+      "nombre": "Costos y gastos por pagar",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 73,
+    "fields": {
+      "codigo": "2340",
+      "nombre": "Instalamentos diferidos",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 74,
+    "fields": {
+      "codigo": "2345",
+      "nombre": "Acreedores oficiales",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 75,
+    "fields": {
+      "codigo": "2355",
+      "nombre": "Deudas con accionistas",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 76,
+    "fields": {
+      "codigo": "2360",
+      "nombre": "Dividendos por pagar",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 77,
+    "fields": {
+      "codigo": "2365",
+      "nombre": "Retención en la fuente",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 78,
+    "fields": {
+      "codigo": "236505",
+      "nombre": "Salarios y pagos laborales",
+      "tipo": "pasivo",
+      "padre": 77,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 79,
+    "fields": {
+      "codigo": "236515",
+      "nombre": "Servicios",
+      "tipo": "pasivo",
+      "padre": 77,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 80,
+    "fields": {
+      "codigo": "236520",
+      "nombre": "Compras",
+      "tipo": "pasivo",
+      "padre": 77,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 81,
+    "fields": {
+      "codigo": "236540",
+      "nombre": "Honorarios",
+      "tipo": "pasivo",
+      "padre": 77,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 82,
+    "fields": {
+      "codigo": "2367",
+      "nombre": "Impuesto a las ventas retenido",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 83,
+    "fields": {
+      "codigo": "236705",
+      "nombre": "ReteIVA",
+      "tipo": "pasivo",
+      "padre": 82,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 84,
+    "fields": {
+      "codigo": "2368",
+      "nombre": "Impuesto de industria y comercio retenido",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 85,
+    "fields": {
+      "codigo": "236805",
+      "nombre": "ReteICA",
+      "tipo": "pasivo",
+      "padre": 84,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 86,
+    "fields": {
+      "codigo": "2370",
+      "nombre": "Retenciones y aportes de nómina",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 87,
+    "fields": {
+      "codigo": "237005",
+      "nombre": "Aportes a entidades promotoras de salud",
+      "tipo": "pasivo",
+      "padre": 86,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 88,
+    "fields": {
+      "codigo": "237006",
+      "nombre": "Aportes a fondos de pensiones",
+      "tipo": "pasivo",
+      "padre": 86,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 89,
+    "fields": {
+      "codigo": "237010",
+      "nombre": "Aportes al SENA",
+      "tipo": "pasivo",
+      "padre": 86,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 90,
+    "fields": {
+      "codigo": "237015",
+      "nombre": "Aportes al ICBF",
+      "tipo": "pasivo",
+      "padre": 86,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 91,
+    "fields": {
+      "codigo": "237020",
+      "nombre": "Aportes a cajas de compensación familiar",
+      "tipo": "pasivo",
+      "padre": 86,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 92,
+    "fields": {
+      "codigo": "2380",
+      "nombre": "Acreedores varios",
+      "tipo": "pasivo",
+      "padre": 68,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 93,
+    "fields": {
+      "codigo": "24",
+      "nombre": "Impuestos, gravámenes y tasas",
+      "tipo": "pasivo",
+      "padre": 59,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 94,
+    "fields": {
+      "codigo": "2404",
+      "nombre": "Impuesto de renta y complementarios",
+      "tipo": "pasivo",
+      "padre": 93,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 95,
+    "fields": {
+      "codigo": "2408",
+      "nombre": "Impuesto sobre las ventas por pagar",
+      "tipo": "pasivo",
+      "padre": 93,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 96,
+    "fields": {
+      "codigo": "240801",
+      "nombre": "IVA por pagar",
+      "tipo": "pasivo",
+      "padre": 95,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 97,
+    "fields": {
+      "codigo": "240802",
+      "nombre": "IVA descontable",
+      "tipo": "pasivo",
+      "padre": 95,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 98,
+    "fields": {
+      "codigo": "2412",
+      "nombre": "Impuesto de industria y comercio",
+      "tipo": "pasivo",
+      "padre": 93,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 99,
+    "fields": {
+      "codigo": "2416",
+      "nombre": "Impuesto predial unificado",
+      "tipo": "pasivo",
+      "padre": 93,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 100,
+    "fields": {
+      "codigo": "25",
+      "nombre": "Obligaciones laborales",
+      "tipo": "pasivo",
+      "padre": 59,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 101,
+    "fields": {
+      "codigo": "2505",
+      "nombre": "Salarios por pagar",
+      "tipo": "pasivo",
+      "padre": 100,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 102,
+    "fields": {
+      "codigo": "2510",
+      "nombre": "Cesantías consolidadas",
+      "tipo": "pasivo",
+      "padre": 100,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 103,
+    "fields": {
+      "codigo": "2515",
+      "nombre": "Intereses sobre cesantías",
+      "tipo": "pasivo",
+      "padre": 100,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 104,
+    "fields": {
+      "codigo": "2520",
+      "nombre": "Prima de servicios",
+      "tipo": "pasivo",
+      "padre": 100,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 105,
+    "fields": {
+      "codigo": "2525",
+      "nombre": "Vacaciones consolidadas",
+      "tipo": "pasivo",
+      "padre": 100,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 106,
+    "fields": {
+      "codigo": "2530",
+      "nombre": "Prestaciones extralegales",
+      "tipo": "pasivo",
+      "padre": 100,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 107,
+    "fields": {
+      "codigo": "26",
+      "nombre": "Pasivos estimados y provisiones",
+      "tipo": "pasivo",
+      "padre": 59,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 108,
+    "fields": {
+      "codigo": "2605",
+      "nombre": "Para costos y gastos",
+      "tipo": "pasivo",
+      "padre": 107,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 109,
+    "fields": {
+      "codigo": "2610",
+      "nombre": "Para obligaciones fiscales",
+      "tipo": "pasivo",
+      "padre": 107,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 110,
+    "fields": {
+      "codigo": "2615",
+      "nombre": "Para obligaciones laborales",
+      "tipo": "pasivo",
+      "padre": 107,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 111,
+    "fields": {
+      "codigo": "27",
+      "nombre": "Diferidos (pasivo)",
+      "tipo": "pasivo",
+      "padre": 59,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 112,
+    "fields": {
+      "codigo": "2705",
+      "nombre": "Ingresos recibidos por anticipado",
+      "tipo": "pasivo",
+      "padre": 111,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 113,
+    "fields": {
+      "codigo": "28",
+      "nombre": "Otros pasivos",
+      "tipo": "pasivo",
+      "padre": 59,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 114,
+    "fields": {
+      "codigo": "2805",
+      "nombre": "Anticipos y avances recibidos",
+      "tipo": "pasivo",
+      "padre": 113,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 115,
+    "fields": {
+      "codigo": "2810",
+      "nombre": "Depósitos recibidos",
+      "tipo": "pasivo",
+      "padre": 113,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 116,
+    "fields": {
+      "codigo": "29",
+      "nombre": "Bonos y papeles comerciales",
+      "tipo": "pasivo",
+      "padre": 59,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 117,
+    "fields": {
+      "codigo": "2905",
+      "nombre": "Bonos en circulación",
+      "tipo": "pasivo",
+      "padre": 116,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 118,
+    "fields": {
+      "codigo": "3",
+      "nombre": "Patrimonio",
+      "tipo": "patrimonio",
+      "padre": null,
+      "nivel": 1,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 119,
+    "fields": {
+      "codigo": "31",
+      "nombre": "Capital social",
+      "tipo": "patrimonio",
+      "padre": 118,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 120,
+    "fields": {
+      "codigo": "3105",
+      "nombre": "Capital suscrito y pagado",
+      "tipo": "patrimonio",
+      "padre": 119,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 121,
+    "fields": {
+      "codigo": "310505",
+      "nombre": "Capital autorizado",
+      "tipo": "patrimonio",
+      "padre": 120,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 122,
+    "fields": {
+      "codigo": "32",
+      "nombre": "Superávit de capital",
+      "tipo": "patrimonio",
+      "padre": 118,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 123,
+    "fields": {
+      "codigo": "3205",
+      "nombre": "Prima en colocación de acciones",
+      "tipo": "patrimonio",
+      "padre": 122,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 124,
+    "fields": {
+      "codigo": "33",
+      "nombre": "Reservas",
+      "tipo": "patrimonio",
+      "padre": 118,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 125,
+    "fields": {
+      "codigo": "3305",
+      "nombre": "Reserva legal",
+      "tipo": "patrimonio",
+      "padre": 124,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 126,
+    "fields": {
+      "codigo": "3310",
+      "nombre": "Reservas estatutarias",
+      "tipo": "patrimonio",
+      "padre": 124,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 127,
+    "fields": {
+      "codigo": "3315",
+      "nombre": "Reservas ocasionales",
+      "tipo": "patrimonio",
+      "padre": 124,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 128,
+    "fields": {
+      "codigo": "34",
+      "nombre": "Revalorización del patrimonio",
+      "tipo": "patrimonio",
+      "padre": 118,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 129,
+    "fields": {
+      "codigo": "3405",
+      "nombre": "Ajuste por inflación",
+      "tipo": "patrimonio",
+      "padre": 128,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 130,
+    "fields": {
+      "codigo": "36",
+      "nombre": "Resultados del ejercicio",
+      "tipo": "patrimonio",
+      "padre": 118,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 131,
+    "fields": {
+      "codigo": "3605",
+      "nombre": "Utilidad del ejercicio",
+      "tipo": "patrimonio",
+      "padre": 130,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 132,
+    "fields": {
+      "codigo": "3610",
+      "nombre": "Pérdida del ejercicio",
+      "tipo": "patrimonio",
+      "padre": 130,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 133,
+    "fields": {
+      "codigo": "37",
+      "nombre": "Resultados de ejercicios anteriores",
+      "tipo": "patrimonio",
+      "padre": 118,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 134,
+    "fields": {
+      "codigo": "3705",
+      "nombre": "Utilidades acumuladas",
+      "tipo": "patrimonio",
+      "padre": 133,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 135,
+    "fields": {
+      "codigo": "3710",
+      "nombre": "Pérdidas acumuladas",
+      "tipo": "patrimonio",
+      "padre": 133,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 136,
+    "fields": {
+      "codigo": "4",
+      "nombre": "Ingresos",
+      "tipo": "ingreso",
+      "padre": null,
+      "nivel": 1,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 137,
+    "fields": {
+      "codigo": "41",
+      "nombre": "Operacionales",
+      "tipo": "ingreso",
+      "padre": 136,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 138,
+    "fields": {
+      "codigo": "4105",
+      "nombre": "Agricultura, ganadería, caza y silvicultura",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 139,
+    "fields": {
+      "codigo": "4110",
+      "nombre": "Pesca",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 140,
+    "fields": {
+      "codigo": "4115",
+      "nombre": "Explotación de minas y canteras",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 141,
+    "fields": {
+      "codigo": "4120",
+      "nombre": "Industrias manufactureras",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 142,
+    "fields": {
+      "codigo": "4125",
+      "nombre": "Suministro de electricidad, gas y agua",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 143,
+    "fields": {
+      "codigo": "4130",
+      "nombre": "Construcción",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 144,
+    "fields": {
+      "codigo": "4135",
+      "nombre": "Comercio al por mayor y al por menor",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 145,
+    "fields": {
+      "codigo": "413505",
+      "nombre": "Ventas de mercancías",
+      "tipo": "ingreso",
+      "padre": 144,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 146,
+    "fields": {
+      "codigo": "4140",
+      "nombre": "Hoteles y restaurantes",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 147,
+    "fields": {
+      "codigo": "4145",
+      "nombre": "Transporte, almacenamiento y comunicaciones",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 148,
+    "fields": {
+      "codigo": "4155",
+      "nombre": "Actividades inmobiliarias",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 149,
+    "fields": {
+      "codigo": "4160",
+      "nombre": "Enseñanza",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 150,
+    "fields": {
+      "codigo": "4165",
+      "nombre": "Servicios sociales y de salud",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 151,
+    "fields": {
+      "codigo": "4195",
+      "nombre": "Otras actividades de servicios",
+      "tipo": "ingreso",
+      "padre": 137,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 152,
+    "fields": {
+      "codigo": "419505",
+      "nombre": "Honorarios",
+      "tipo": "ingreso",
+      "padre": 151,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 153,
+    "fields": {
+      "codigo": "419510",
+      "nombre": "Servicios",
+      "tipo": "ingreso",
+      "padre": 151,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 154,
+    "fields": {
+      "codigo": "42",
+      "nombre": "No operacionales",
+      "tipo": "ingreso",
+      "padre": 136,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 155,
+    "fields": {
+      "codigo": "4205",
+      "nombre": "Financieros",
+      "tipo": "ingreso",
+      "padre": 154,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 156,
+    "fields": {
+      "codigo": "420505",
+      "nombre": "Intereses",
+      "tipo": "ingreso",
+      "padre": 155,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 157,
+    "fields": {
+      "codigo": "420510",
+      "nombre": "Descuentos comerciales",
+      "tipo": "ingreso",
+      "padre": 155,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 158,
+    "fields": {
+      "codigo": "4210",
+      "nombre": "Dividendos",
+      "tipo": "ingreso",
+      "padre": 154,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 159,
+    "fields": {
+      "codigo": "4215",
+      "nombre": "Arrendamientos",
+      "tipo": "ingreso",
+      "padre": 154,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 160,
+    "fields": {
+      "codigo": "4225",
+      "nombre": "Comisiones",
+      "tipo": "ingreso",
+      "padre": 154,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 161,
+    "fields": {
+      "codigo": "4230",
+      "nombre": "Honorarios",
+      "tipo": "ingreso",
+      "padre": 154,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 162,
+    "fields": {
+      "codigo": "4235",
+      "nombre": "Servicios",
+      "tipo": "ingreso",
+      "padre": 154,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 163,
+    "fields": {
+      "codigo": "4245",
+      "nombre": "Utilidad en venta de inversiones",
+      "tipo": "ingreso",
+      "padre": 154,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 164,
+    "fields": {
+      "codigo": "4250",
+      "nombre": "Utilidad en venta de propiedades",
+      "tipo": "ingreso",
+      "padre": 154,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 165,
+    "fields": {
+      "codigo": "4295",
+      "nombre": "Diversos",
+      "tipo": "ingreso",
+      "padre": 154,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 166,
+    "fields": {
+      "codigo": "5",
+      "nombre": "Gastos",
+      "tipo": "gasto",
+      "padre": null,
+      "nivel": 1,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 167,
+    "fields": {
+      "codigo": "51",
+      "nombre": "Operacionales de administración",
+      "tipo": "gasto",
+      "padre": 166,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 168,
+    "fields": {
+      "codigo": "5105",
+      "nombre": "Gastos de personal",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 169,
+    "fields": {
+      "codigo": "510506",
+      "nombre": "Sueldos",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 170,
+    "fields": {
+      "codigo": "510527",
+      "nombre": "Auxilio de transporte",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 171,
+    "fields": {
+      "codigo": "510530",
+      "nombre": "Cesantías",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 172,
+    "fields": {
+      "codigo": "510533",
+      "nombre": "Intereses sobre cesantías",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 173,
+    "fields": {
+      "codigo": "510536",
+      "nombre": "Prima de servicios",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 174,
+    "fields": {
+      "codigo": "510539",
+      "nombre": "Vacaciones",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 175,
+    "fields": {
+      "codigo": "510545",
+      "nombre": "Aportes a EPS",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 176,
+    "fields": {
+      "codigo": "510548",
+      "nombre": "Aportes a fondos de pensiones",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 177,
+    "fields": {
+      "codigo": "510551",
+      "nombre": "Aportes ARL",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 178,
+    "fields": {
+      "codigo": "510554",
+      "nombre": "Aportes SENA",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 179,
+    "fields": {
+      "codigo": "510557",
+      "nombre": "Aportes ICBF",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 180,
+    "fields": {
+      "codigo": "510560",
+      "nombre": "Aportes caja compensación",
+      "tipo": "gasto",
+      "padre": 168,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 181,
+    "fields": {
+      "codigo": "5110",
+      "nombre": "Honorarios",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 182,
+    "fields": {
+      "codigo": "5115",
+      "nombre": "Impuestos",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 183,
+    "fields": {
+      "codigo": "5120",
+      "nombre": "Arrendamientos",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 184,
+    "fields": {
+      "codigo": "5125",
+      "nombre": "Contribuciones y afiliaciones",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 185,
+    "fields": {
+      "codigo": "5130",
+      "nombre": "Seguros",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 186,
+    "fields": {
+      "codigo": "5135",
+      "nombre": "Servicios",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 187,
+    "fields": {
+      "codigo": "513530",
+      "nombre": "Servicios públicos",
+      "tipo": "gasto",
+      "padre": 186,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 188,
+    "fields": {
+      "codigo": "513535",
+      "nombre": "Servicios de aseo y vigilancia",
+      "tipo": "gasto",
+      "padre": 186,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 189,
+    "fields": {
+      "codigo": "5140",
+      "nombre": "Gastos legales",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 190,
+    "fields": {
+      "codigo": "5145",
+      "nombre": "Mantenimiento y reparaciones",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 191,
+    "fields": {
+      "codigo": "5150",
+      "nombre": "Adecuación e instalación",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 192,
+    "fields": {
+      "codigo": "5155",
+      "nombre": "Gastos de viaje",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 193,
+    "fields": {
+      "codigo": "5160",
+      "nombre": "Depreciaciones",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 194,
+    "fields": {
+      "codigo": "5165",
+      "nombre": "Amortizaciones",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 195,
+    "fields": {
+      "codigo": "5195",
+      "nombre": "Diversos",
+      "tipo": "gasto",
+      "padre": 167,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 196,
+    "fields": {
+      "codigo": "519595",
+      "nombre": "Otros gastos",
+      "tipo": "gasto",
+      "padre": 195,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 197,
+    "fields": {
+      "codigo": "52",
+      "nombre": "Operacionales de ventas",
+      "tipo": "gasto",
+      "padre": 166,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 198,
+    "fields": {
+      "codigo": "5205",
+      "nombre": "Gastos de personal ventas",
+      "tipo": "gasto",
+      "padre": 197,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 199,
+    "fields": {
+      "codigo": "5210",
+      "nombre": "Honorarios ventas",
+      "tipo": "gasto",
+      "padre": 197,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 200,
+    "fields": {
+      "codigo": "5245",
+      "nombre": "Publicidad y propaganda",
+      "tipo": "gasto",
+      "padre": 197,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 201,
+    "fields": {
+      "codigo": "5250",
+      "nombre": "Comisiones",
+      "tipo": "gasto",
+      "padre": 197,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 202,
+    "fields": {
+      "codigo": "5260",
+      "nombre": "Fletes",
+      "tipo": "gasto",
+      "padre": 197,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 203,
+    "fields": {
+      "codigo": "5295",
+      "nombre": "Diversos ventas",
+      "tipo": "gasto",
+      "padre": 197,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 204,
+    "fields": {
+      "codigo": "53",
+      "nombre": "No operacionales",
+      "tipo": "gasto",
+      "padre": 166,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 205,
+    "fields": {
+      "codigo": "5305",
+      "nombre": "Financieros",
+      "tipo": "gasto",
+      "padre": 204,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 206,
+    "fields": {
+      "codigo": "530505",
+      "nombre": "Gastos bancarios",
+      "tipo": "gasto",
+      "padre": 205,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 207,
+    "fields": {
+      "codigo": "530510",
+      "nombre": "Intereses",
+      "tipo": "gasto",
+      "padre": 205,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 208,
+    "fields": {
+      "codigo": "530515",
+      "nombre": "Comisiones financieras",
+      "tipo": "gasto",
+      "padre": 205,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 209,
+    "fields": {
+      "codigo": "5315",
+      "nombre": "Pérdida en venta de inversiones",
+      "tipo": "gasto",
+      "padre": 204,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 210,
+    "fields": {
+      "codigo": "5320",
+      "nombre": "Pérdida en venta de propiedades",
+      "tipo": "gasto",
+      "padre": 204,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 211,
+    "fields": {
+      "codigo": "5395",
+      "nombre": "Diversos no operacionales",
+      "tipo": "gasto",
+      "padre": 204,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 212,
+    "fields": {
+      "codigo": "54",
+      "nombre": "Impuesto de renta y complementarios",
+      "tipo": "gasto",
+      "padre": 166,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 213,
+    "fields": {
+      "codigo": "5405",
+      "nombre": "Impuesto de renta",
+      "tipo": "gasto",
+      "padre": 212,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 214,
+    "fields": {
+      "codigo": "6",
+      "nombre": "Costos de producción",
+      "tipo": "costo",
+      "padre": null,
+      "nivel": 1,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 215,
+    "fields": {
+      "codigo": "61",
+      "nombre": "Costo de ventas y de prestación de servicios",
+      "tipo": "costo",
+      "padre": 214,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 216,
+    "fields": {
+      "codigo": "6105",
+      "nombre": "Agricultura",
+      "tipo": "costo",
+      "padre": 215,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 217,
+    "fields": {
+      "codigo": "6115",
+      "nombre": "Industrias manufactureras",
+      "tipo": "costo",
+      "padre": 215,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 218,
+    "fields": {
+      "codigo": "6120",
+      "nombre": "Construcción",
+      "tipo": "costo",
+      "padre": 215,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 219,
+    "fields": {
+      "codigo": "6125",
+      "nombre": "Comercio al por mayor y al por menor",
+      "tipo": "costo",
+      "padre": 215,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 220,
+    "fields": {
+      "codigo": "612505",
+      "nombre": "Costo de ventas mercancías",
+      "tipo": "costo",
+      "padre": 219,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 221,
+    "fields": {
+      "codigo": "6135",
+      "nombre": "Hoteles y restaurantes",
+      "tipo": "costo",
+      "padre": 215,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 222,
+    "fields": {
+      "codigo": "6145",
+      "nombre": "Transporte",
+      "tipo": "costo",
+      "padre": 215,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 223,
+    "fields": {
+      "codigo": "6195",
+      "nombre": "Otros costos de ventas",
+      "tipo": "costo",
+      "padre": 215,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 224,
+    "fields": {
+      "codigo": "62",
+      "nombre": "Compras",
+      "tipo": "costo",
+      "padre": 214,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 225,
+    "fields": {
+      "codigo": "6205",
+      "nombre": "Compras de mercancías",
+      "tipo": "costo",
+      "padre": 224,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 226,
+    "fields": {
+      "codigo": "620505",
+      "nombre": "Compras nacionales",
+      "tipo": "costo",
+      "padre": 225,
+      "nivel": 4,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 227,
+    "fields": {
+      "codigo": "7",
+      "nombre": "Costos de producción (clase 7)",
+      "tipo": "costo",
+      "padre": null,
+      "nivel": 1,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 228,
+    "fields": {
+      "codigo": "71",
+      "nombre": "Materia prima",
+      "tipo": "costo",
+      "padre": 227,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 229,
+    "fields": {
+      "codigo": "7105",
+      "nombre": "Materiales directos",
+      "tipo": "costo",
+      "padre": 228,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 230,
+    "fields": {
+      "codigo": "72",
+      "nombre": "Mano de obra directa",
+      "tipo": "costo",
+      "padre": 227,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 231,
+    "fields": {
+      "codigo": "7205",
+      "nombre": "Sueldos MOD",
+      "tipo": "costo",
+      "padre": 230,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 232,
+    "fields": {
+      "codigo": "7210",
+      "nombre": "Horas extras MOD",
+      "tipo": "costo",
+      "padre": 230,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 233,
+    "fields": {
+      "codigo": "73",
+      "nombre": "Costos indirectos",
+      "tipo": "costo",
+      "padre": 227,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 234,
+    "fields": {
+      "codigo": "7305",
+      "nombre": "Materiales indirectos",
+      "tipo": "costo",
+      "padre": 233,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 235,
+    "fields": {
+      "codigo": "7310",
+      "nombre": "Mano de obra indirecta",
+      "tipo": "costo",
+      "padre": 233,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 236,
+    "fields": {
+      "codigo": "8",
+      "nombre": "Cuentas de orden deudoras",
+      "tipo": "activo",
+      "padre": null,
+      "nivel": 1,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 237,
+    "fields": {
+      "codigo": "81",
+      "nombre": "Derechos contingentes",
+      "tipo": "activo",
+      "padre": 236,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 238,
+    "fields": {
+      "codigo": "8105",
+      "nombre": "Litigios y demandas (deudoras)",
+      "tipo": "activo",
+      "padre": 237,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 239,
+    "fields": {
+      "codigo": "9",
+      "nombre": "Cuentas de orden acreedoras",
+      "tipo": "pasivo",
+      "padre": null,
+      "nivel": 1,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 240,
+    "fields": {
+      "codigo": "91",
+      "nombre": "Responsabilidades contingentes",
+      "tipo": "pasivo",
+      "padre": 239,
+      "nivel": 2,
+      "activa": true,
+      "permite_movimiento": false
+    }
+  },
+  {
+    "model": "contabilidad.cuentapuc",
+    "pk": 241,
+    "fields": {
+      "codigo": "9105",
+      "nombre": "Litigios y demandas (acreedoras)",
+      "tipo": "pasivo",
+      "padre": 240,
+      "nivel": 3,
+      "activa": true,
+      "permite_movimiento": true
+    }
+  }
+]

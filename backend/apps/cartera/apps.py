@@ -1,0 +1,10 @@
+from django.apps import AppConfig
+
+
+class CarteraConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.cartera'
+    verbose_name = 'Cartera'
+
+    def ready(self):
+        import apps.cartera.signals  # noqa

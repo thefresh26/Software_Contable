@@ -1,0 +1,156 @@
+{% extends "pdf/base_pdf.html" %}
+{% load formato_co %}
+{% block content %}
+
+<!-- CABECERA -->
+<div class="header">
+  <div>
+    <div class="empresa-nombre">{{ usuario.empresa|default:"Mi Empresa" }}</div>
+    <div class="empresa-info">
+      NIT: {{ usuario.nit_empresa|default:"—" }}<br>
+      {{ usuario.email|default:"" }}
+    </div>
+  </div>
+  <div class="documento-titulo">
+    <div class="documento-tipo">{{ factura.tipo|tipo_factura_label }}</div>
+    <div class="documento-numero">{{ factura.numero }}</div>
+    <div class="documento-fecha">
+      Fecha: {{ factura.fecha|date:"d/m/Y" }}<br>
+      {% if factura.fecha_vencimiento %}Vence: {{ factura.fecha_vencimiento|date:"d/m/Y" }}<br>{% endif %}
+    </div>
+    <span class="badge {{ factura.estado|estado_badge_class }}">
+      {{ factura.get_estado_display|upper }}
+    </span>
+  </div>
+</div>
+
+<!-- DATOS TERCERO + DOCUMENTO -->
+<div class="seccion-datos">
+  <div class="datos-box">
+    <h4>{% if factura.tipo == 'FV' %}Facturar a{% else %}Proveedor{% endif %}</h4>
+    <p><strong>{{ factura.tercero.nombre }}</strong></p>
+    <p>NIT / C.C.: {{ factura.tercero.nit }}</p>
+    {% if factura.tercero.direccion %}<p>{{ factura.tercero.direccion }}</p>{% endif %}
+    {% if factura.tercero.ciudad %}<p>{{ factura.tercero.ciudad }}</p>{% endif %}
+    {% if factura.tercero.email %}<p>{{ factura.tercero.email }}</p>{% endif %}
+    {% if factura.tercero.telefono %}<p>Tel: {{ factura.tercero.telefono }}</p>{% endif %}
+  </div>
+  <div class="datos-box">
+    <h4>Información del documento</h4>
+    <p><strong>Número:</strong> {{ factura.numero }}</p>
+    <p><strong>Fecha emisión:</strong> {{ factura.fecha|date:"d \d\e F \d\e Y" }}</p>
+    {% if factura.fecha_vencimiento %}
+    <p><strong>Fecha vencimiento:</strong> {{ factura.fecha_vencimiento|date:"d \d\e F \d\e Y" }}</p>
+    {% endif %}
+    <p><strong>Estado:</strong> {{ factura.get_estado_display }}</p>
+    <p><strong>Condición pago:</strong> {% if factura.fecha_vencimiento %}Crédito{% else %}Contado{% endif %}</p>
+  </div>
+</div>
+
+<!-- TABLA DE PRODUCTOS -->
+<table class="items">
+  <thead>
+    <tr>
+      <th class="text-center" style="width:4%">#</th>
+      <th style="width:35%">Descripción</th>
+      <th class="text-center" style="width:10%">Cant.</th>
+      <th class="text-right" style="width:15%">P. Unitario</th>
+      <th class="text-right" style="width:10%">Desc %</th>
+      <th class="text-center" style="width:8%">IVA %</th>
+      <th class="text-right" style="width:18%">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for det in detalles %}
+    <tr>
+      <td class="text-center">{{ forloop.counter }}</td>
+      <td>
+        {{ det.descripcion }}
+        {% if det.producto %}<br><span class="text-muted" style="font-size:9px">Cód: {{ det.producto.codigo }}</span>{% endif %}
+      </td>
+      <td class="text-center">{{ det.cantidad|floatformat:"-2" }}</td>
+      <td class="text-right">{{ det.precio_unitario|peso }}</td>
+      <td class="text-right">{{ det.descuento_porcentaje|porcentaje }}</td>
+      <td class="text-center">{{ det.iva_porcentaje|porcentaje }}</td>
+      <td class="text-right font-bold">{{ det.total|peso }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7" class="text-center text-muted">Sin ítems</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- RETENCIONES -->
+{% if retenciones %}
+<div class="retenciones-section">
+  <h3>Retenciones aplicadas</h3>
+  <table class="retenciones">
+    <thead>
+      <tr>
+        <th>Tipo de retención</th>
+        <th class="text-right">Base gravable</th>
+        <th class="text-right">%</th>
+        <th class="text-right">Valor retención</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ret in retenciones %}
+      <tr>
+        <td>{{ ret.tipo_retencion.nombre }}</td>
+        <td class="text-right">{{ ret.base|peso }}</td>
+        <td class="text-right">{{ ret.porcentaje|porcentaje }}</td>
+        <td class="text-right" style="color:#dc2626">{{ ret.valor|peso }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+<!-- TOTALES -->
+<div class="totales-wrapper">
+  <div class="totales">
+    <table>
+      <tr>
+        <td class="label">Subtotal</td>
+        <td class="valor">{{ factura.subtotal|peso }}</td>
+      </tr>
+      {% if factura.descuento %}
+      <tr>
+        <td class="label">Descuento</td>
+        <td class="valor" style="color:#dc2626">- {{ factura.descuento|peso }}</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <td class="label">IVA</td>
+        <td class="valor">{{ factura.iva|peso }}</td>
+      </tr>
+      {% if retenciones %}
+      <tr class="separator">
+        <td class="label retencion">Retenciones</td>
+        <td class="valor retencion">- {{ factura.total_retenciones|peso }}</td>
+      </tr>
+      {% endif %}
+      <tr class="total-final">
+        <td>TOTAL A PAGAR</td>
+        <td class="text-right">{{ factura.neto_pagar|peso }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- OBSERVACIONES -->
+{% if factura.observaciones %}
+<div class="observaciones">
+  <strong>Observaciones</strong>
+  {{ factura.observaciones }}
+</div>
+{% endif %}
+
+<!-- FOOTER -->
+<div class="footer">
+  Documento generado por <strong>ContaApp</strong> — Sistema Contable Colombia<br>
+  Generado el {% now "d/m/Y \a \l\a\s H:i" %} por {{ usuario.get_full_name|default:usuario.username }}
+</div>
+
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "pdf/base_pdf.html" %}
+{% load formato_co %}
+{% block content %}
+
+<style>
+  .conc-header { display: flex; justify-content: space-between; align-items: flex-start;
+                 margin-bottom: 20px; border-bottom: 2px solid #2563eb; padding-bottom: 14px; }
+  .periodo-badge { background: #dbeafe; color: #1e40af; border-radius: 6px;
+                   padding: 6px 12px; font-size: 11px; font-weight: bold; margin-top: 6px;
+                   display: inline-block; }
+  .seccion-title { font-size: 11px; font-weight: bold; text-transform: uppercase;
+                   color: #1e3a5f; margin: 18px 0 8px; letter-spacing: 0.5px;
+                   border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+
+  table.conciliacion { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+  table.conciliacion thead { background: #f1f5f9; }
+  table.conciliacion thead th { padding: 5px 10px; font-size: 9px; color: #64748b;
+                                text-align: left; text-transform: uppercase; }
+  table.conciliacion tbody td { padding: 4px 10px; border-bottom: 1px solid #f1f5f9; font-size: 10px; }
+  table.conciliacion .saldo-row { font-weight: bold; background: #f8fafc !important; }
+  table.conciliacion .saldo-row td { border-top: 1px solid #cbd5e1; padding: 6px 10px; }
+  table.conciliacion .ajustado-row { font-weight: bold; background: #e0f2fe !important; }
+  table.conciliacion .ajustado-row td { border-top: 1px solid #0ea5e9; padding: 7px 10px; }
+  .negativo { color: #dc2626; }
+
+  .resultado-box { border: 2px solid #1e3a5f; border-radius: 8px; overflow: hidden;
+                   margin: 18px 0; }
+  .resultado-box table { width: 100%; border-collapse: collapse; }
+  .resultado-box td { padding: 8px 16px; font-size: 12px; border-bottom: 1px solid #e2e8f0; }
+  .resultado-box .resultado-final { font-weight: bold; font-size: 14px; }
+  .resultado-box .resultado-final.ok { background: #16a34a; color: white; }
+  .resultado-box .resultado-final.no-ok { background: #dc2626; color: white; }
+  .resultado-box .resultado-final td { border: none; padding: 11px 16px; }
+  .resultado-box .label-col { color: #555; }
+  .resultado-box .valor-col { text-align: right; font-weight: bold; }
+
+  .firmas { display: flex; justify-content: space-around; margin-top: 40px; }
+  .firma-box { text-align: center; width: 200px; }
+  .firma-box .linea { border-top: 1px solid #333; margin-bottom: 6px; }
+  .firma-box p { font-size: 10px; line-height: 1.6; color: #444; }
+  .firma-box strong { font-size: 11px; color: #1e3a5f; }
+</style>
+
+<!-- 1. ENCABEZADO -->
+<div class="conc-header">
+  <div>
+    <div class="empresa-nombre">{{ usuario.empresa|default:"Mi Empresa" }}</div>
+    <div class="empresa-info">
+      NIT: {{ usuario.nit_empresa|default:"—" }}<br>
+      Cuenta: {{ reporte.cuenta }}
+    </div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:16px; font-weight:bold; color:#1e3a5f; text-transform:uppercase;">
+      Conciliación Bancaria
+    </div>
+    <div class="periodo-badge">Período: {{ reporte.periodo }}</div>
+  </div>
+</div>
+
+<!-- 2. SECCIÓN A: SALDO SEGÚN EXTRACTO -->
+<div class="seccion-title">A. Saldo según extracto bancario</div>
+<table class="conciliacion">
+  <thead><tr><th>Concepto</th><th class="text-right">Fecha</th><th class="text-right">Valor</th></tr></thead>
+  <tbody>
+    <tr class="saldo-row">
+      <td>Saldo según extracto bancario</td><td></td>
+      <td class="text-right">{{ reporte.saldo_extracto_bancario|peso }}</td>
+    </tr>
+    {% for item in reporte.ajustes_al_extracto.depositos_en_transito %}
+    <tr>
+      <td>(+) Depósito en tránsito — {{ item.descripcion }}</td>
+      <td class="text-right">{{ item.fecha|date:"d/m/Y" }}</td>
+      <td class="text-right">{{ item.valor|peso }}</td>
+    </tr>
+    {% endfor %}
+    {% for item in reporte.ajustes_al_extracto.cheques_girados_no_cobrados %}
+    <tr>
+      <td>(−) Cheque girado no cobrado — {{ item.descripcion }}</td>
+      <td class="text-right">{{ item.fecha|date:"d/m/Y" }}</td>
+      <td class="text-right negativo">{{ item.valor|peso }}</td>
+    </tr>
+    {% endfor %}
+    <tr class="ajustado-row">
+      <td>SALDO EXTRACTO AJUSTADO</td><td></td>
+      <td class="text-right">{{ reporte.saldo_extracto_ajustado|peso }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- 3. SECCIÓN B: SALDO SEGÚN LIBROS -->
+<div class="seccion-title">B. Saldo según libros</div>
+<table class="conciliacion">
+  <thead><tr><th>Concepto</th><th class="text-right">Fecha</th><th class="text-right">Valor</th></tr></thead>
+  <tbody>
+    <tr class="saldo-row">
+      <td>Saldo según libros</td><td></td>
+      <td class="text-right">{{ reporte.saldo_en_libros|peso }}</td>
+    </tr>
+    {% for item in reporte.ajustes_a_libros.notas_credito_no_registradas %}
+    <tr>
+      <td>(+) Nota crédito banco no registrada — {{ item.descripcion }}</td>
+      <td class="text-right">{{ item.fecha|date:"d/m/Y" }}</td>
+      <td class="text-right">{{ item.valor|peso }}</td>
+    </tr>
+    {% endfor %}
+    {% for item in reporte.ajustes_a_libros.notas_debito_no_registradas %}
+    <tr>
+      <td>(−) Nota débito banco no registrada — {{ item.descripcion }}</td>
+      <td class="text-right">{{ item.fecha|date:"d/m/Y" }}</td>
+      <td class="text-right negativo">{{ item.valor|peso }}</td>
+    </tr>
+    {% endfor %}
+    {% for item in reporte.ajustes_a_libros.errores_libros %}
+    <tr>
+      <td>Error en libros — {{ item.descripcion }}</td>
+      <td class="text-right">{{ item.fecha|date:"d/m/Y" }}</td>
+      <td class="text-right">{{ item.valor|peso }}</td>
+    </tr>
+    {% endfor %}
+    <tr class="ajustado-row">
+      <td>SALDO LIBROS AJUSTADO</td><td></td>
+      <td class="text-right">{{ reporte.saldo_libros_ajustado|peso }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- 4. RESULTADO -->
+<div class="resultado-box">
+  <table>
+    <tr>
+      <td class="label-col">Saldo extracto ajustado</td>
+      <td class="valor-col">{{ reporte.saldo_extracto_ajustado|peso }}</td>
+    </tr>
+    <tr>
+      <td class="label-col">Saldo libros ajustado</td>
+      <td class="valor-col">{{ reporte.saldo_libros_ajustado|peso }}</td>
+    </tr>
+    <tr class="resultado-final {% if reporte.conciliado %}ok{% else %}no-ok{% endif %}">
+      <td>DIFERENCIA — {% if reporte.conciliado %}CONCILIADO ✓{% else %}NO CONCILIADO{% endif %}</td>
+      <td class="text-right">{{ reporte.diferencia_final|peso }}</td>
+    </tr>
+  </table>
+</div>
+
+<!-- 5. TABLA PARTIDAS EN TRÁNSITO -->
+<div class="seccion-title">Partidas en tránsito y diferencias identificadas</div>
+<table class="conciliacion">
+  <thead>
+    <tr><th>Tipo</th><th>Descripción</th><th class="text-right">Fecha</th><th class="text-right">Valor</th></tr>
+  </thead>
+  <tbody>
+    {% for partida in conciliacion.partidas.all %}
+    <tr>
+      <td>{{ partida.get_tipo_display }}</td>
+      <td>{{ partida.descripcion }}</td>
+      <td class="text-right">{{ partida.fecha|date:"d/m/Y" }}</td>
+      <td class="text-right {% if partida.valor < 0 %}negativo{% endif %}">{{ partida.valor|peso }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4" style="text-align:center; color:#94a3b8">Sin partidas registradas</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- 6. RESUMEN DE MOVIMIENTOS -->
+<div style="margin-top:14px; font-size:10px; color:#555">
+  Movimientos del extracto: {{ reporte.resumen_movimientos.total_movimientos_extracto }} |
+  Conciliados: {{ reporte.resumen_movimientos.movimientos_conciliados }} |
+  Pendientes: {{ reporte.resumen_movimientos.movimientos_pendientes }}
+</div>
+
+<!-- FIRMAS -->
+<div class="firmas">
+  <div class="firma-box">
+    <div style="height:35px"></div>
+    <div class="linea"></div>
+    <p><strong>Contador</strong><br>Elaboró</p>
+  </div>
+  <div class="firma-box">
+    <div style="height:35px"></div>
+    <div class="linea"></div>
+    <p><strong>Gerente</strong><br>Revisó y aprobó</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Documento generado por <strong>ContaApp</strong> — Sistema Contable Colombia |
+  Fecha de reporte: {{ reporte.fecha_reporte }} | {% now "d/m/Y H:i" %}
+</div>
+
+{% endblock %}

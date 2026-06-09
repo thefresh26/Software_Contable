@@ -1,0 +1,141 @@
+{% extends "pdf/base_pdf.html" %}
+{% load formato_co %}
+{% block content %}
+
+<style>
+  .terminos { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+              padding: 14px; margin-bottom: 20px; }
+  .terminos h4 { font-size: 10px; text-transform: uppercase; color: #64748b;
+                 margin-bottom: 8px; letter-spacing: 0.5px; }
+  .terminos p { font-size: 11px; line-height: 1.6; white-space: pre-wrap; }
+  .alerta-vencimiento { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 6px;
+                         padding: 8px 12px; margin-bottom: 16px; font-size: 10px; color: #92400e; }
+  .footer-cotizacion { margin-top: 30px; border-top: 2px solid #2563eb; padding-top: 14px;
+                        font-size: 10px; color: #64748b; }
+</style>
+
+<!-- CABECERA -->
+<div class="header">
+  <div>
+    <div class="empresa-nombre">{{ usuario.empresa|default:"Mi Empresa" }}</div>
+    <div class="empresa-info">
+      NIT: {{ usuario.nit_empresa|default:"—" }}<br>
+      {{ usuario.email|default:"" }}
+    </div>
+  </div>
+  <div class="documento-titulo">
+    <div class="documento-tipo">Cotización</div>
+    <div class="documento-numero">{{ cotizacion.numero }}</div>
+    <div class="documento-fecha">
+      Fecha: {{ cotizacion.fecha|date:"d/m/Y" }}<br>
+      Válida hasta: <strong>{{ cotizacion.fecha_vencimiento|date:"d/m/Y" }}</strong>
+    </div>
+    <span class="badge {{ cotizacion.estado|estado_badge_class }}">
+      {{ cotizacion.get_estado_display|upper }}
+    </span>
+  </div>
+</div>
+
+<!-- ALERTA DE VENCIMIENTO PRÓXIMO -->
+{% now "Y-m-d" as hoy %}
+{% if cotizacion.estado == 'enviada' or cotizacion.estado == 'borrador' %}
+<div class="alerta-vencimiento">
+  ⚠ Esta cotización tiene validez hasta el <strong>{{ cotizacion.fecha_vencimiento|date:"d \d\e F \d\e Y" }}</strong>.
+  Responda antes de la fecha de vencimiento para conservar los precios indicados.
+</div>
+{% endif %}
+
+<!-- DATOS CLIENTE + DOCUMENTO -->
+<div class="seccion-datos">
+  <div class="datos-box">
+    <h4>Cliente</h4>
+    <p><strong>{{ cotizacion.tercero.nombre }}</strong></p>
+    <p>NIT / C.C.: {{ cotizacion.tercero.nit }}</p>
+    {% if cotizacion.tercero.direccion %}<p>{{ cotizacion.tercero.direccion }}</p>{% endif %}
+    {% if cotizacion.tercero.ciudad %}<p>{{ cotizacion.tercero.ciudad }}</p>{% endif %}
+    {% if cotizacion.tercero.email %}<p>{{ cotizacion.tercero.email }}</p>{% endif %}
+    {% if cotizacion.tercero.telefono %}<p>Tel: {{ cotizacion.tercero.telefono }}</p>{% endif %}
+  </div>
+  <div class="datos-box">
+    <h4>Información de la cotización</h4>
+    <p><strong>Número:</strong> {{ cotizacion.numero }}</p>
+    <p><strong>Fecha elaboración:</strong> {{ cotizacion.fecha|date:"d \d\e F \d\e Y" }}</p>
+    <p><strong>Válida hasta:</strong> {{ cotizacion.fecha_vencimiento|date:"d \d\e F \d\e Y" }}</p>
+    <p><strong>Estado:</strong> {{ cotizacion.get_estado_display }}</p>
+    <p><strong>Elaborado por:</strong> {{ usuario.get_full_name|default:usuario.username }}</p>
+  </div>
+</div>
+
+<!-- TABLA DE ÍTEMS -->
+<table class="items">
+  <thead>
+    <tr>
+      <th class="text-center" style="width:4%">#</th>
+      <th style="width:40%">Descripción</th>
+      <th class="text-center" style="width:10%">Cant.</th>
+      <th class="text-right" style="width:16%">P. Unitario</th>
+      <th class="text-center" style="width:8%">IVA %</th>
+      <th class="text-right" style="width:22%">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for det in detalles %}
+    <tr>
+      <td class="text-center">{{ forloop.counter }}</td>
+      <td>{{ det.descripcion }}</td>
+      <td class="text-center">{{ det.cantidad|floatformat:"-2" }}</td>
+      <td class="text-right">{{ det.precio_unitario|peso }}</td>
+      <td class="text-center">{{ det.iva_porcentaje|porcentaje }}</td>
+      <td class="text-right font-bold">{{ det.total|peso }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" class="text-center text-muted">Sin ítems</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- TOTALES -->
+<div class="totales-wrapper">
+  <div class="totales">
+    <table>
+      <tr>
+        <td class="label">Subtotal</td>
+        <td class="valor">{{ cotizacion.subtotal|peso }}</td>
+      </tr>
+      <tr>
+        <td class="label">IVA</td>
+        <td class="valor">{{ cotizacion.iva|peso }}</td>
+      </tr>
+      <tr class="total-final">
+        <td>TOTAL</td>
+        <td class="text-right">{{ cotizacion.total|peso }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- OBSERVACIONES -->
+{% if cotizacion.observaciones %}
+<div class="observaciones">
+  <strong>Observaciones</strong>
+  {{ cotizacion.observaciones }}
+</div>
+{% endif %}
+
+<!-- TÉRMINOS Y CONDICIONES -->
+{% if cotizacion.terminos %}
+<div class="terminos">
+  <h4>Términos y condiciones</h4>
+  <p>{{ cotizacion.terminos }}</p>
+</div>
+{% endif %}
+
+<!-- FOOTER -->
+<div class="footer-cotizacion">
+  <strong>Esta cotización tiene validez hasta el {{ cotizacion.fecha_vencimiento|date:"d/m/Y" }}.</strong>
+  Los precios no incluyen costos adicionales no mencionados explícitamente.<br><br>
+  Generado por <strong>ContaApp</strong> — Sistema Contable Colombia |
+  {% now "d/m/Y H:i" %}
+</div>
+
+{% endblock %}

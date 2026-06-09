@@ -1,0 +1,9 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<h2>👥 Nómina pendiente de liquidar</h2>
+<p>Hola <strong>{{ usuario.first_name }}</strong>,</p>
+<div class="alert-box alert-media">
+  <p style="margin:0">Tienes <strong>{{ cantidad }}</strong> empleado(s) activos sin liquidación registrada para el período actual.</p>
+</div>
+<a href="http://localhost:5173/nomina/liquidar" class="btn">Liquidar Nómina</a>
+{% endblock %}
