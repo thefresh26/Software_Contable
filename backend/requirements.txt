@@ -9,4 +9,8 @@ xhtml2pdf==0.2.*
 django-filter==23.*
 openpyxl==3.1.*
 pytest-django==4.7.*
+gunicorn==21.2.0
+whitenoise==6.6.0
+dj-database-url==2.1.0
+django-storages==1.14.2
 

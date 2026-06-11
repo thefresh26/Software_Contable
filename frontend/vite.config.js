@@ -8,6 +8,11 @@ export default defineConfig({
     proxy: {
       '/api': { target: 'http://localhost:8000', changeOrigin: true },
       '/media': { target: 'http://localhost:8000', changeOrigin: true },
+
     },
+      allowedHosts: 'all',
+  },
+  build: {
+    outDir: 'dist',
   },
 })
