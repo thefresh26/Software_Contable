@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/client'
+import { descargarExcel } from '../../utils/excel'
 
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 const estadoBadge = { pendiente: 'badge-yellow', parcial: 'badge-gray', pagada: 'badge-green', vencida: 'badge-red' }
@@ -67,7 +68,10 @@ export default function PorPagar() {
   return (
     <div className="space-y-4">
       {modal && <ModalPago cuenta={modal} onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }} />}
-      <h1 className="text-2xl font-bold text-slate-800">Cuentas por Pagar</h1>
+      <div className="flex flex-wrap justify-between items-center gap-2 mb-3">
+        <h1 className="text-2xl font-bold text-slate-800">Cuentas por Pagar</h1>
+        <button className="btn-excel" onClick={() => descargarExcel('/cartera/exportar/por-pagar/', 'por_pagar.xlsx').catch(() => alert('Error al exportar'))}>⬇ Excel</button>
+      </div>
       <select className="input w-40" value={estadoF} onChange={e => setEstadoF(e.target.value)}>
         <option value="">Todos</option>
         {['pendiente', 'parcial', 'pagada', 'vencida'].map(e => <option key={e} value={e}>{e}</option>)}

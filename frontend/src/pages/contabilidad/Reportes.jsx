@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import api from '../../api/client'
+import { descargarExcel } from '../../utils/excel'
 
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 
@@ -21,6 +22,14 @@ export default function Reportes() {
   const [balance, setBalance] = useState(null)
   const [resultados, setResultados] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [exportando, setExportando] = useState(false)
+
+  const exportar = async (path, filename) => {
+    setExportando(true)
+    try { await descargarExcel(path, filename) }
+    catch { alert('Error al exportar') }
+    finally { setExportando(false) }
+  }
 
   const cargarBalance = async () => {
     setLoading(true)
@@ -49,9 +58,12 @@ export default function Reportes() {
 
       {tab === 'balance' && (
         <div className="card space-y-4">
-          <div className="flex gap-3 items-end">
+          <div className="flex gap-3 items-end flex-wrap">
             <div><label className="label">Al corte de fecha</label><input className="input w-40" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} /></div>
             <button className="btn-primary" onClick={cargarBalance} disabled={loading}>{loading ? 'Calculando…' : 'Generar'}</button>
+            <button className="btn-excel" disabled={exportando} onClick={() => exportar(`/contabilidad/asientos/exportar-balance-general/?fecha=${fecha}`, `balance_general_${fecha}.xlsx`)}>
+              {exportando ? '…' : '⬇ Excel'}
+            </button>
           </div>
 
           {balance && (
@@ -86,6 +98,9 @@ export default function Reportes() {
             <div><label className="label">Desde</label><input className="input w-40" type="date" value={desde} onChange={(e) => setDesde(e.target.value)} /></div>
             <div><label className="label">Hasta</label><input className="input w-40" type="date" value={hasta} onChange={(e) => setHasta(e.target.value)} /></div>
             <button className="btn-primary" onClick={cargarResultados} disabled={loading}>{loading ? 'Calculando…' : 'Generar'}</button>
+            <button className="btn-excel" disabled={exportando} onClick={() => exportar(`/contabilidad/asientos/exportar-estado-resultados/?desde=${desde}&hasta=${hasta}`, 'estado_resultados.xlsx')}>
+              {exportando ? '…' : '⬇ Excel'}
+            </button>
           </div>
 
           {resultados && (

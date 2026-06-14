@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import CategoriaViewSet, ProductoViewSet, MovimientoInventarioViewSet, AjusteStockView
+from .exports import ExportarProductosView
 
 router = DefaultRouter()
 router.register(r'categorias', CategoriaViewSet, basename='categoria')
@@ -10,4 +11,5 @@ router.register(r'movimientos', MovimientoInventarioViewSet, basename='movimient
 urlpatterns = [
     path('', include(router.urls)),
     path('ajuste/', AjusteStockView.as_view({'post': 'ajuste'}), name='ajuste-stock'),
+    path('exportar/productos/', ExportarProductosView.as_view(), name='exportar-productos'),
 ]

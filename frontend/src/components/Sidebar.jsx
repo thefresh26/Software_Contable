@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 import api from '../api/client'
 
 const nav = [
@@ -31,6 +32,7 @@ const nav = [
       { label: 'Asientos', to: '/contabilidad/asientos' },
       { label: 'Reportes', to: '/contabilidad/reportes' },
       { label: 'Centros de Costo', to: '/contabilidad/centros-costo' },
+      { label: 'Cierre de Período', to: '/contabilidad/cierres' },
     ],
   },
   {
@@ -127,6 +129,7 @@ function EmpresaSelector({ user, onCambiar }) {
 
 export default function Sidebar({ isOpen, onClose }) {
   const { user, logout, cambiarEmpresa } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const rol = user?.rol || 'auxiliar'
 
   const puedeVer = (item) => {
@@ -204,9 +207,19 @@ export default function Sidebar({ isOpen, onClose }) {
 
       <div className="px-4 py-3 border-t border-slate-700">
         <p className="text-slate-400 text-xs mb-1 truncate">{user?.username}</p>
-        <button onClick={logout} className="w-full text-left text-xs text-slate-400 hover:text-white py-1">
-          Cerrar sesión →
-        </button>
+        <div className="flex items-center justify-between">
+          <button onClick={logout} className="text-xs text-slate-400 hover:text-white py-1">
+            Cerrar sesión →
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="text-slate-400 hover:text-white text-lg leading-none p-1 rounded"
+            aria-label="Cambiar modo"
+            title={theme === 'light' ? 'Activar modo oscuro' : 'Activar modo claro'}
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
+        </div>
       </div>
     </aside>
   )

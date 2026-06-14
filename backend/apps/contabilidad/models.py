@@ -1,5 +1,7 @@
+import datetime
 from django.db import models
 from django.db.models import Sum
+from django.core.exceptions import ValidationError
 
 
 class CentroCosto(models.Model):
@@ -73,6 +75,36 @@ class CuentaPUC(models.Model):
         return credito - debito
 
 
+class CierrePeriodo(models.Model):
+    ESTADOS = [('abierto', 'Abierto'), ('cerrado', 'Cerrado')]
+
+    empresa = models.ForeignKey(
+        'empresas.Empresa', on_delete=models.CASCADE, related_name='cierres_periodo',
+    )
+    periodo = models.DateField()  # primer día del mes: 2024-01-01
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='abierto')
+    cerrado_por = models.ForeignKey(
+        'core.Usuario', null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='cierres_realizados'
+    )
+    cerrado_at = models.DateTimeField(null=True, blank=True)
+    notas = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Cierre de Período'
+        verbose_name_plural = 'Cierres de Período'
+        ordering = ['-periodo']
+        unique_together = [('empresa', 'periodo')]
+
+    def __str__(self):
+        return f"Cierre {self.periodo.strftime('%Y-%m')} — {self.get_estado_display()}"
+
+    def periodo_fin(self):
+        import calendar
+        last_day = calendar.monthrange(self.periodo.year, self.periodo.month)[1]
+        return datetime.date(self.periodo.year, self.periodo.month, last_day)
+
+
 class AsientoContable(models.Model):
     empresa = models.ForeignKey(
         'empresas.Empresa', null=True, blank=True,
@@ -98,6 +130,20 @@ class AsientoContable(models.Model):
 
     def __str__(self):
         return f"Asiento {self.pk} — {self.fecha} — {self.descripcion[:50]}"
+
+    def save(self, *args, **kwargs):
+        if self.fecha and self.empresa_id:
+            primer_dia = datetime.date(self.fecha.year, self.fecha.month, 1)
+            if CierrePeriodo.objects.filter(
+                empresa_id=self.empresa_id,
+                periodo=primer_dia,
+                estado='cerrado',
+            ).exists():
+                raise ValidationError(
+                    f"El período {primer_dia.strftime('%B %Y')} está cerrado. "
+                    "No se pueden crear ni modificar asientos."
+                )
+        super().save(*args, **kwargs)
 
     def esta_cuadrado(self):
         totales = self.movimientos.aggregate(

@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.db.models import Sum, Q
+from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -7,10 +8,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 
 from apps.empresas.mixins import EmpresaFilterMixin
-from .models import CuentaPUC, AsientoContable, MovimientoContable, CentroCosto
+from apps.core.excel_utils import nuevo_libro, ajustar_columnas, excel_response
+from .models import CuentaPUC, AsientoContable, MovimientoContable, CentroCosto, CierrePeriodo
 from .serializers import (
     CuentaPUCSerializer, AsientoContableSerializer,
-    AsientoContableCreateSerializer, CentroCostoSerializer,
+    AsientoContableCreateSerializer, CentroCostoSerializer, CierrePeriodoSerializer,
 )
 
 
@@ -248,3 +250,194 @@ class AsientoContableViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
             c['utilidad'] = c['ingresos'] - c['gastos'] - c['costos']
             resultado.append(c)
         return Response(resultado)
+
+    @action(detail=False, methods=['get'], url_path='exportar-balance-general')
+    def exportar_balance_general(self, request):
+        fecha = request.query_params.get('fecha', str(timezone.now().date()))
+        empresa = getattr(request, 'empresa_activa', None)
+        empresa_nombre = empresa.nombre if empresa else 'Mi Empresa'
+
+        qs = MovimientoContable.objects.select_related('cuenta', 'asiento')
+        if empresa:
+            qs = qs.filter(asiento__empresa=empresa)
+        qs = qs.filter(asiento__fecha__lte=fecha)
+
+        totales: dict = {}
+        for mov in qs:
+            tipo = mov.cuenta.tipo
+            totales.setdefault(tipo, Decimal('0'))
+            if tipo in ('activo', 'gasto', 'costo'):
+                totales[tipo] += mov.debito - mov.credito
+            else:
+                totales[tipo] += mov.credito - mov.debito
+
+        activos = totales.get('activo', Decimal('0'))
+        pasivos = totales.get('pasivo', Decimal('0'))
+        utilidad = totales.get('ingreso', Decimal('0')) - totales.get('costo', Decimal('0')) - totales.get('gasto', Decimal('0'))
+        patrimonio = totales.get('patrimonio', Decimal('0')) + utilidad
+
+        cabeceras = ['Sección', 'Valor (COP)']
+        wb, ws, fila = nuevo_libro('Balance General', empresa_nombre, f'Balance General al {fecha}', cabeceras)
+        filas_data = [
+            ('ACTIVOS', float(activos)),
+            ('PASIVOS', float(pasivos)),
+            ('Utilidad del ejercicio', float(utilidad)),
+            ('PATRIMONIO TOTAL', float(patrimonio)),
+            ('Pasivos + Patrimonio', float(pasivos + patrimonio)),
+        ]
+        for row in filas_data:
+            ws.append(row)
+        ajustar_columnas(ws)
+        return excel_response(wb, f'balance_general_{fecha}.xlsx')
+
+    @action(detail=False, methods=['get'], url_path='exportar-estado-resultados')
+    def exportar_estado_resultados(self, request):
+        desde = request.query_params.get('desde', '')
+        hasta = request.query_params.get('hasta', str(timezone.now().date()))
+        empresa = getattr(request, 'empresa_activa', None)
+        empresa_nombre = empresa.nombre if empresa else 'Mi Empresa'
+
+        qs = MovimientoContable.objects.select_related('cuenta', 'asiento')
+        if empresa:
+            qs = qs.filter(asiento__empresa=empresa)
+        if desde:
+            qs = qs.filter(asiento__fecha__gte=desde)
+        if hasta:
+            qs = qs.filter(asiento__fecha__lte=hasta)
+
+        ingresos = costos = gastos = Decimal('0')
+        for mov in qs:
+            tipo = mov.cuenta.tipo
+            if tipo == 'ingreso':
+                ingresos += mov.credito - mov.debito
+            elif tipo == 'costo':
+                costos += mov.debito - mov.credito
+            elif tipo == 'gasto':
+                gastos += mov.debito - mov.credito
+
+        cabeceras = ['Concepto', 'Valor (COP)']
+        periodo = f"{desde} — {hasta}" if desde else f"Al {hasta}"
+        wb, ws, fila = nuevo_libro('Estado de Resultados', empresa_nombre, f'Estado de Resultados {periodo}', cabeceras)
+        for row in [
+            ('INGRESOS OPERACIONALES', float(ingresos)),
+            ('(-) COSTOS DE VENTAS', float(costos)),
+            ('UTILIDAD BRUTA', float(ingresos - costos)),
+            ('(-) GASTOS OPERACIONALES', float(gastos)),
+            ('UTILIDAD NETA', float(ingresos - costos - gastos)),
+        ]:
+            ws.append(row)
+        ajustar_columnas(ws)
+        return excel_response(wb, f'estado_resultados.xlsx')
+
+    @action(detail=False, methods=['get'], url_path='exportar-libro-diario')
+    def exportar_libro_diario(self, request):
+        desde = request.query_params.get('desde', '')
+        hasta = request.query_params.get('hasta', str(timezone.now().date()))
+        empresa = getattr(request, 'empresa_activa', None)
+        empresa_nombre = empresa.nombre if empresa else 'Mi Empresa'
+
+        qs = AsientoContable.objects.prefetch_related('movimientos__cuenta').order_by('fecha')
+        if empresa:
+            qs = qs.filter(empresa=empresa)
+        if desde:
+            qs = qs.filter(fecha__gte=desde)
+        if hasta:
+            qs = qs.filter(fecha__lte=hasta)
+
+        cabeceras = ['Fecha', 'Asiento #', 'Descripción', 'Cuenta', 'Débito', 'Crédito']
+        wb, ws, fila = nuevo_libro('Libro Diario', empresa_nombre, f'Libro Diario {desde} — {hasta}', cabeceras)
+        for asiento in qs:
+            for mov in asiento.movimientos.all():
+                ws.append([
+                    str(asiento.fecha), asiento.pk, asiento.descripcion[:60],
+                    f"{mov.cuenta.codigo} — {mov.cuenta.nombre}",
+                    float(mov.debito), float(mov.credito),
+                ])
+        ajustar_columnas(ws)
+        return excel_response(wb, 'libro_diario.xlsx')
+
+    @action(detail=False, methods=['get'], url_path='exportar-libro-mayor')
+    def exportar_libro_mayor(self, request):
+        codigo = request.query_params.get('cuenta', '')
+        desde = request.query_params.get('desde', '')
+        hasta = request.query_params.get('hasta', str(timezone.now().date()))
+        empresa = getattr(request, 'empresa_activa', None)
+        empresa_nombre = empresa.nombre if empresa else 'Mi Empresa'
+
+        qs = MovimientoContable.objects.select_related('cuenta', 'asiento').order_by('asiento__fecha')
+        if empresa:
+            qs = qs.filter(asiento__empresa=empresa)
+        if codigo:
+            qs = qs.filter(cuenta__codigo=codigo)
+        if desde:
+            qs = qs.filter(asiento__fecha__gte=desde)
+        if hasta:
+            qs = qs.filter(asiento__fecha__lte=hasta)
+
+        cabeceras = ['Fecha', 'Cuenta', 'Descripción', 'Débito', 'Crédito', 'Saldo']
+        wb, ws, fila = nuevo_libro('Libro Mayor', empresa_nombre, f'Libro Mayor {codigo}', cabeceras)
+        saldo = Decimal('0')
+        for mov in qs:
+            tipo = mov.cuenta.tipo
+            if tipo in ('activo', 'gasto', 'costo'):
+                saldo += mov.debito - mov.credito
+            else:
+                saldo += mov.credito - mov.debito
+            ws.append([
+                str(mov.asiento.fecha),
+                f"{mov.cuenta.codigo} — {mov.cuenta.nombre}",
+                mov.descripcion or mov.asiento.descripcion[:50],
+                float(mov.debito), float(mov.credito), float(saldo),
+            ])
+        ajustar_columnas(ws)
+        return excel_response(wb, 'libro_mayor.xlsx')
+
+
+class CierrePeriodoViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
+    queryset = CierrePeriodo.objects.select_related('cerrado_por', 'empresa').all()
+    serializer_class = CierrePeriodoSerializer
+    filterset_fields = ['estado']
+
+    def perform_create(self, serializer):
+        serializer.save(empresa=getattr(self.request, 'empresa_activa', None))
+
+    @action(detail=False, methods=['get'], url_path='estado')
+    def estado_periodo(self, request):
+        fecha_str = request.query_params.get('fecha', str(timezone.now().date()))
+        try:
+            import datetime
+            fecha = datetime.date.fromisoformat(fecha_str)
+        except ValueError:
+            return Response({'error': 'Fecha inválida. Use YYYY-MM-DD.'}, status=400)
+        primer_dia = fecha.replace(day=1)
+        empresa = getattr(request, 'empresa_activa', None)
+        cierre = CierrePeriodo.objects.filter(empresa=empresa, periodo=primer_dia).first()
+        return Response({
+            'periodo': str(primer_dia),
+            'cerrado': cierre.estado == 'cerrado' if cierre else False,
+            'cierre_id': cierre.pk if cierre else None,
+        })
+
+    @action(detail=True, methods=['post'])
+    def cerrar(self, request, pk=None):
+        cierre = self.get_object()
+        if cierre.estado == 'cerrado':
+            return Response({'error': 'El período ya está cerrado.'}, status=400)
+        cierre.estado = 'cerrado'
+        cierre.cerrado_por = request.user
+        cierre.cerrado_at = timezone.now()
+        cierre.save()
+        return Response(CierrePeriodoSerializer(cierre).data)
+
+    @action(detail=True, methods=['post'])
+    def reabrir(self, request, pk=None):
+        if not (request.user.is_superuser or getattr(request.user, 'rol', '') == 'admin'):
+            return Response({'error': 'Solo un administrador puede reabrir un período.'}, status=403)
+        cierre = self.get_object()
+        if cierre.estado == 'abierto':
+            return Response({'error': 'El período ya está abierto.'}, status=400)
+        cierre.estado = 'abierto'
+        cierre.cerrado_por = None
+        cierre.cerrado_at = None
+        cierre.save()
+        return Response(CierrePeriodoSerializer(cierre).data)

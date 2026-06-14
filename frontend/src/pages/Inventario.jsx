@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../api/client'
+import { descargarExcel } from '../utils/excel'
 
 const EMPTY_PROD = { codigo: '', nombre: '', descripcion: '', categoria: '', precio_compra: '', precio_venta: '', iva_porcentaje: 19, stock_actual: 0, stock_minimo: 5, unidad_medida: 'UND', activo: true }
 
@@ -87,9 +88,12 @@ export default function Inventario() {
         <ModalProducto item={modal === true ? null : modal} categorias={categorias} onClose={() => setModal(false)} onSaved={() => { setModal(false); load() }} />
       )}
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-2">
         <h1 className="text-2xl font-bold text-slate-800">Inventario</h1>
-        <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo Producto</button>
+        <div className="flex gap-2">
+          <button className="btn-excel" onClick={() => descargarExcel('/inventario/exportar/productos/', 'productos.xlsx').catch(() => alert('Error al exportar'))}>⬇ Excel</button>
+          <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo Producto</button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-3 items-center">

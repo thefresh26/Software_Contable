@@ -1,5 +1,19 @@
 from rest_framework import serializers
-from .models import CuentaPUC, AsientoContable, MovimientoContable, CentroCosto
+from .models import CuentaPUC, AsientoContable, MovimientoContable, CentroCosto, CierrePeriodo
+
+
+class CierrePeriodoSerializer(serializers.ModelSerializer):
+    cerrado_por_nombre = serializers.CharField(source='cerrado_por.username', read_only=True)
+    estado_display = serializers.CharField(source='get_estado_display', read_only=True)
+    periodo_fin = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CierrePeriodo
+        fields = '__all__'
+        read_only_fields = ['id', 'cerrado_por', 'cerrado_at', 'estado']
+
+    def get_periodo_fin(self, obj):
+        return obj.periodo_fin()
 
 
 class CentroCostoSerializer(serializers.ModelSerializer):

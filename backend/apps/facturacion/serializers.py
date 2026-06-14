@@ -1,5 +1,14 @@
 from rest_framework import serializers
-from .models import Factura, DetalleFactura, TipoRetencion, RetencionFactura
+from .models import Factura, DetalleFactura, TipoRetencion, RetencionFactura, MedioPago
+
+
+class MedioPagoSerializer(serializers.ModelSerializer):
+    tipo_display = serializers.CharField(source='get_tipo_display', read_only=True)
+
+    class Meta:
+        model = MedioPago
+        fields = '__all__'
+        read_only_fields = ['id']
 
 
 class TipoRetencionSerializer(serializers.ModelSerializer):
@@ -29,6 +38,7 @@ class DetalleFacturaSerializer(serializers.ModelSerializer):
 class FacturaSerializer(serializers.ModelSerializer):
     detalles = DetalleFacturaSerializer(many=True, read_only=True)
     retenciones = RetencionFacturaSerializer(many=True, read_only=True)
+    medios_pago = MedioPagoSerializer(many=True, read_only=True)
     tercero_nombre = serializers.CharField(source='tercero.nombre', read_only=True)
     total_retenciones = serializers.DecimalField(max_digits=15, decimal_places=2, read_only=True)
     neto_pagar = serializers.DecimalField(max_digits=15, decimal_places=2, read_only=True)

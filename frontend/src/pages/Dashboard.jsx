@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
@@ -27,6 +28,7 @@ export default function Dashboard() {
   const [kpis, setKpis] = useState({ ventas: 0, compras: 0, utilidad: 0, stockBajo: 0 })
   const [grafica, setGrafica] = useState([])
   const [alertas, setAlertas] = useState([])
+  const [periodosAbiertos, setPeriodosAbiertos] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -40,11 +42,15 @@ export default function Dashboard() {
       api.get(`/facturacion/facturas/?tipo=FV&estado=emitida&fecha_desde=${inicio}&fecha_hasta=${fin}&page_size=1000`),
       api.get(`/facturacion/facturas/?tipo=FC&estado=emitida&fecha_desde=${inicio}&fecha_hasta=${fin}&page_size=1000`),
       api.get('/inventario/productos/?stock_bajo=true&page_size=100'),
-    ]).then(([fv, fc, stock]) => {
+      api.get('/contabilidad/cierres/?estado=abierto&page_size=50'),
+    ]).then(([fv, fc, stock, cierres]) => {
       const ventas = (fv.data.results || []).reduce((a, f) => a + Number(f.total), 0)
       const compras = (fc.data.results || []).reduce((a, f) => a + Number(f.total), 0)
       setKpis({ ventas, compras, utilidad: ventas - compras, stockBajo: stock.data.count || 0 })
       setAlertas((stock.data.results || []).slice(0, 5))
+      const hace60 = new Date(); hace60.setDate(hace60.getDate() - 60)
+      const viejos = (cierres.data.results || []).filter(c => new Date(c.periodo) < hace60)
+      setPeriodosAbiertos(viejos)
     }).catch(() => {}).finally(() => setLoading(false))
 
     // Gráfica últimos 6 meses
@@ -79,6 +85,20 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-slate-800">Dashboard</h1>
+
+      {periodosAbiertos.length > 0 && (
+        <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-yellow-600 text-lg">⚠️</span>
+            <p className="text-sm text-yellow-800 font-medium">
+              {periodosAbiertos.length} período{periodosAbiertos.length > 1 ? 's' : ''} contable{periodosAbiertos.length > 1 ? 's' : ''} sin cerrar con más de 60 días de antigüedad.
+            </p>
+          </div>
+          <Link to="/contabilidad/cierres" className="text-xs text-yellow-700 hover:underline font-medium shrink-0">
+            Ver cierres →
+          </Link>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard label="Ventas del mes" value={fmt(kpis.ventas)} color="blue" />

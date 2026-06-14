@@ -51,6 +51,7 @@ class Factura(models.Model):
     ESTADOS = [
         ('borrador', 'Borrador'),
         ('emitida', 'Emitida'),
+        ('pagada', 'Pagada'),
         ('anulada', 'Anulada'),
     ]
 
@@ -101,6 +102,35 @@ class Factura(models.Model):
     @property
     def neto_pagar(self):
         return self.total - self.total_retenciones
+
+
+class MedioPago(models.Model):
+    TIPOS = [
+        ('efectivo', 'Efectivo'),
+        ('transferencia', 'Transferencia Bancaria'),
+        ('cheque', 'Cheque'),
+        ('tarjeta_credito', 'Tarjeta de Crédito'),
+        ('tarjeta_debito', 'Tarjeta de Débito'),
+        ('consignacion', 'Consignación'),
+        ('nequi', 'Nequi'),
+        ('daviplata', 'Daviplata'),
+        ('otro', 'Otro'),
+    ]
+    factura = models.ForeignKey(Factura, on_delete=models.CASCADE, related_name='medios_pago')
+    tipo = models.CharField(max_length=30, choices=TIPOS)
+    valor = models.DecimalField(max_digits=15, decimal_places=2)
+    referencia = models.CharField(max_length=100, blank=True)
+    fecha = models.DateField()
+    banco = models.CharField(max_length=100, blank=True)
+    observacion = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Medio de Pago'
+        verbose_name_plural = 'Medios de Pago'
+        ordering = ['fecha']
+
+    def __str__(self):
+        return f"{self.get_tipo_display()} — {self.valor}"
 
 
 class DetalleFactura(models.Model):

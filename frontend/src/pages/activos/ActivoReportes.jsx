@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/client'
+import { descargarExcel } from '../../utils/excel'
 
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 
@@ -36,7 +37,10 @@ export default function ActivoReportes() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-800">Reportes de Activos Fijos</h1>
+      <div className="flex flex-wrap justify-between items-center gap-2">
+        <h1 className="text-2xl font-bold text-slate-800">Reportes de Activos Fijos</h1>
+        <button className="btn-excel" onClick={() => descargarExcel('/activos/exportar/', 'activos_fijos.xlsx').catch(() => alert('Error al exportar'))}>⬇ Excel</button>
+      </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card label="Total activos activos" value={resumen.activos_activos} color="blue" />

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -36,9 +37,11 @@ import Usuarios from './pages/Usuarios'
 import Importar from './pages/Importar'
 import EmpresaLista from './pages/empresas/EmpresaLista'
 import EmpresaNueva from './pages/empresas/EmpresaNueva'
+import CierresPeriodo from './pages/contabilidad/CierresPeriodo'
 
 export default function App() {
   return (
+    <ThemeProvider>
     <AuthProvider>
       <BrowserRouter>
         <Routes>
@@ -55,6 +58,7 @@ export default function App() {
             <Route path="contabilidad/asientos" element={<Asientos />} />
             <Route path="contabilidad/reportes" element={<Reportes />} />
             <Route path="contabilidad/centros-costo" element={<CentrosCosto />} />
+            <Route path="contabilidad/cierres" element={<CierresPeriodo />} />
             <Route path="presupuestos" element={<PresupuestoLista />} />
             <Route path="presupuestos/nuevo" element={<PresupuestoNuevo />} />
             <Route path="activos" element={<ActivoLista />} />
@@ -83,5 +87,6 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+    </ThemeProvider>
   )
 }

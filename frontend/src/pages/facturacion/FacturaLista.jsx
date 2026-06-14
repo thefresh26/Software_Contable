@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/client'
+import { descargarExcel } from '../../utils/excel'
 
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 
-const estadoBadge = { borrador: 'badge-gray', emitida: 'badge-green', anulada: 'badge-red' }
+const estadoBadge = { borrador: 'badge-gray', emitida: 'badge-green', pagada: 'badge-blue', anulada: 'badge-red' }
 const tipoLabel = { FV: 'Fact. Venta', FC: 'Fact. Compra', NC: 'Nota Crédito', ND: 'Nota Débito' }
 
 export default function FacturaLista() {
@@ -12,6 +13,7 @@ export default function FacturaLista() {
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({ tipo: '', estado: '', fecha_desde: '', fecha_hasta: '' })
   const [accion, setAccion] = useState(null)
+  const [exportando, setExportando] = useState(false)
 
   const load = () => {
     setLoading(true)
@@ -42,9 +44,25 @@ export default function FacturaLista() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-2">
         <h1 className="text-2xl font-bold text-slate-800">Facturas</h1>
-        <Link to="/facturacion/nueva" className="btn-primary">+ Nueva Factura</Link>
+        <div className="flex gap-2">
+          <button
+            className="btn-excel"
+            disabled={exportando}
+            onClick={async () => {
+              setExportando(true)
+              const p = new URLSearchParams()
+              Object.entries(filters).forEach(([k, v]) => { if (v) p.set(k, v) })
+              try { await descargarExcel(`/facturacion/facturas/exportar/?${p}`, 'facturas.xlsx') }
+              catch { alert('Error al exportar') }
+              finally { setExportando(false) }
+            }}
+          >
+            {exportando ? '…' : '⬇ Excel'}
+          </button>
+          <Link to="/facturacion/nueva" className="btn-primary">+ Nueva Factura</Link>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -71,14 +89,14 @@ export default function FacturaLista() {
           <thead className="bg-gray-50 border-b">
             <tr>
               <th className="th">Número</th><th className="th">Tipo</th><th className="th">Tercero</th>
-              <th className="th">Fecha</th><th className="th">Total</th><th className="th">Estado</th><th className="th" />
+              <th className="th">Fecha</th><th className="th">Total</th><th className="th">Estado</th><th className="th">Pago</th><th className="th" />
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
-              <tr><td colSpan={7} className="td text-center py-8 text-gray-400">Cargando…</td></tr>
+              <tr><td colSpan={8} className="td text-center py-8 text-gray-400">Cargando…</td></tr>
             ) : data.length === 0 ? (
-              <tr><td colSpan={7} className="td text-center py-8 text-gray-400">Sin facturas</td></tr>
+              <tr><td colSpan={8} className="td text-center py-8 text-gray-400">Sin facturas</td></tr>
             ) : data.map((f) => (
               <tr key={f.id} className="hover:bg-gray-50">
                 <td className="td font-mono text-xs font-semibold">{f.numero}</td>
@@ -86,7 +104,12 @@ export default function FacturaLista() {
                 <td className="td">{f.tercero_nombre}</td>
                 <td className="td">{f.fecha}</td>
                 <td className="td font-medium">{fmt(f.total)}</td>
-                <td className="td"><span className={estadoBadge[f.estado]}>{f.estado}</span></td>
+                <td className="td"><span className={estadoBadge[f.estado] || 'badge-gray'}>{f.estado}</span></td>
+                <td className="td">
+                  {f.medios_pago?.length > 0 && (
+                    <span className="badge-blue text-xs">{f.medios_pago[0].tipo_display || f.medios_pago[0].tipo}</span>
+                  )}
+                </td>
                 <td className="td">
                   <div className="flex gap-2 items-center">
                     {f.estado === 'borrador' && (

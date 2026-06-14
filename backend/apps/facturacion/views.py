@@ -7,10 +7,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from apps.empresas.mixins import EmpresaFilterMixin
-from .models import Factura, DetalleFactura, TipoRetencion
+from apps.core.excel_utils import nuevo_libro, ajustar_columnas, excel_response
+from .models import Factura, DetalleFactura, TipoRetencion, MedioPago
 from .serializers import (
     FacturaSerializer, FacturaCreateSerializer, DetalleFacturaSerializer,
-    TipoRetencionSerializer, RetencionFacturaSerializer,
+    TipoRetencionSerializer, RetencionFacturaSerializer, MedioPagoSerializer,
 )
 from .signals import (
     generar_asiento_factura_venta, generar_asiento_factura_compra,
@@ -27,7 +28,7 @@ class TipoRetencionViewSet(viewsets.ModelViewSet):
 
 class FacturaViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
     queryset = Factura.objects.select_related('tercero').prefetch_related(
-        'detalles__producto', 'retenciones__tipo_retencion'
+        'detalles__producto', 'retenciones__tipo_retencion', 'medios_pago'
     ).all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['tipo', 'estado']
@@ -109,6 +110,58 @@ class FacturaViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
     def retenciones(self, request, pk=None):
         factura = self.get_object()
         return Response(RetencionFacturaSerializer(factura.retenciones.all(), many=True).data)
+
+    @action(detail=True, methods=['get', 'post'], url_path='medios-pago')
+    def medios_pago(self, request, pk=None):
+        factura = self.get_object()
+        if request.method == 'GET':
+            return Response(MedioPagoSerializer(factura.medios_pago.all(), many=True).data)
+        serializer = MedioPagoSerializer(data={**request.data, 'factura': factura.pk})
+        serializer.is_valid(raise_exception=True)
+        total_pagado = sum(m.valor for m in factura.medios_pago.all()) + serializer.validated_data['valor']
+        if total_pagado > factura.total:
+            return Response({'error': 'La suma de medios de pago supera el total de la factura.'}, status=400)
+        medio = serializer.save()
+        if total_pagado >= factura.total and factura.estado == 'emitida':
+            factura.estado = 'pagada'
+            factura.save(update_fields=['estado'])
+        return Response(MedioPagoSerializer(medio).data, status=201)
+
+    @action(detail=False, methods=['get'], url_path='exportar')
+    def exportar(self, request):
+        empresa = getattr(request, 'empresa_activa', None)
+        empresa_nombre = empresa.nombre if empresa else 'Mi Empresa'
+        desde = request.query_params.get('fecha_desde', '')
+        hasta = request.query_params.get('fecha_hasta', '')
+        tipo = request.query_params.get('tipo', '')
+
+        qs = self.get_queryset().select_related('tercero')
+        if tipo:
+            qs = qs.filter(tipo=tipo)
+        if desde:
+            qs = qs.filter(fecha__gte=desde)
+        if hasta:
+            qs = qs.filter(fecha__lte=hasta)
+
+        cabeceras = ['Número', 'Tipo', 'Tercero', 'Fecha', 'Vencimiento', 'Subtotal', 'IVA', 'Total', 'Estado']
+        wb, ws, fila = nuevo_libro('Facturas', empresa_nombre, 'Listado de Facturas', cabeceras)
+        tipos = dict(Factura.TIPOS)
+        estados = dict(Factura.ESTADOS)
+        for f in qs:
+            ws.append([
+                f.numero, tipos.get(f.tipo, f.tipo), f.tercero.nombre,
+                str(f.fecha), str(f.fecha_vencimiento or ''),
+                float(f.subtotal), float(f.iva), float(f.total),
+                estados.get(f.estado, f.estado),
+            ])
+        ajustar_columnas(ws)
+        return excel_response(wb, 'facturas.xlsx')
+
+
+class MedioPagoViewSet(viewsets.ModelViewSet):
+    queryset = MedioPago.objects.select_related('factura').all()
+    serializer_class = MedioPagoSerializer
+    http_method_names = ['get', 'delete', 'head', 'options']
 
 
 class DetalleFacturaViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):

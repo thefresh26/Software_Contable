@@ -2,9 +2,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from apps.core.busqueda import BusquedaGlobalView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/buscar/', BusquedaGlobalView.as_view(), name='busqueda-global'),
     path('api/auth/', include('apps.core.urls')),
     path('api/empresas/', include('apps.empresas.urls')),
     path('api/terceros/', include('apps.terceros.urls')),

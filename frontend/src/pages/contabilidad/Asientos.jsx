@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/client'
+import { descargarExcel } from '../../utils/excel'
 
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 const EMPTY_LINE = { cuenta: '', descripcion: '', debito: 0, credito: 0 }
@@ -110,9 +111,12 @@ export default function Asientos() {
     <div className="space-y-4">
       {modal && <ModalAsiento cuentas={cuentas} onClose={() => setModal(false)} onSaved={() => { setModal(false); load() }} />}
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-2">
         <h1 className="text-2xl font-bold text-slate-800">Libro Diario</h1>
-        <button className="btn-primary" onClick={() => setModal(true)}>+ Asiento Manual</button>
+        <div className="flex gap-2">
+          <button className="btn-excel" onClick={() => descargarExcel(`/contabilidad/asientos/exportar-libro-diario/?desde=${desde}&hasta=${hasta}`, 'libro_diario.xlsx').catch(() => alert('Error al exportar'))}>⬇ Excel</button>
+          <button className="btn-primary" onClick={() => setModal(true)}>+ Asiento Manual</button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-3">

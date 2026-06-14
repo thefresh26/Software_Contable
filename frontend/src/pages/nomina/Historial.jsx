@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/client'
+import { descargarExcel } from '../../utils/excel'
 
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 
@@ -34,7 +35,10 @@ export default function Historial() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-2xl font-bold text-slate-800">Historial de Nómina</h1>
+      <div className="flex flex-wrap justify-between items-center gap-2">
+        <h1 className="text-2xl font-bold text-slate-800">Historial de Nómina</h1>
+        <button className="btn-excel" onClick={() => descargarExcel('/nomina/exportar/liquidaciones/', 'liquidaciones_nomina.xlsx').catch(() => alert('Error al exportar'))}>⬇ Excel</button>
+      </div>
 
       <div className="flex flex-wrap gap-3">
         <select className="input w-52" value={filters.empleado} onChange={(e) => setF('empleado', e.target.value)}>

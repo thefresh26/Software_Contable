@@ -3,6 +3,7 @@ import { Outlet, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Sidebar from './Sidebar'
 import NotificationBell from './NotificationBell'
+import BusquedaGlobal from './BusquedaGlobal'
 
 export default function Layout() {
   const { isAuthenticated, loading } = useAuth()
@@ -39,6 +40,7 @@ export default function Layout() {
             ☰
           </button>
           <span className="hidden md:block text-sm font-semibold text-slate-700">ContaApp</span>
+          <BusquedaGlobal />
           <NotificationBell />
         </header>
         <main className="flex-1 p-4 md:p-6 overflow-y-auto">

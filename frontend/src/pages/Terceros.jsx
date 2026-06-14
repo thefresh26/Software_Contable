@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../api/client'
+import { descargarExcel } from '../utils/excel'
 
 const EMPTY = { tipo: 'cliente', tipo_persona: 'natural', nombre: '', nit: '', email: '', telefono: '', direccion: '', ciudad: '' }
 
@@ -115,9 +116,12 @@ export default function Terceros() {
         <Modal item={modal === true ? null : modal} onClose={() => setModal(false)} onSaved={() => { setModal(false); load() }} />
       )}
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-2">
         <h1 className="text-2xl font-bold text-slate-800">Terceros</h1>
-        <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo</button>
+        <div className="flex gap-2">
+          <button className="btn-excel" onClick={() => descargarExcel('/terceros/exportar/', 'terceros.xlsx').catch(() => alert('Error al exportar'))}>⬇ Excel</button>
+          <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo</button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-3">
