@@ -154,7 +154,7 @@ export default function ActivoDetalle() {
         </form>
       )}
 
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <div className="px-5 py-3 bg-gray-50 border-b">
           <h2 className="font-semibold text-sm text-gray-700">Depreciaciones aplicadas vs proyectadas</h2>
         </div>

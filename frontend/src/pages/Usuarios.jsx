@@ -80,7 +80,7 @@ export default function Usuarios() {
         <h1 className="text-2xl font-bold text-slate-800">Usuarios</h1>
         <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo Usuario</button>
       </div>
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b"><tr><th className="th">Usuario</th><th className="th">Nombre</th><th className="th">Email</th><th className="th">Empresa</th><th className="th">Rol</th><th className="th">Estado</th><th className="th" /></tr></thead>
           <tbody className="divide-y divide-gray-100">

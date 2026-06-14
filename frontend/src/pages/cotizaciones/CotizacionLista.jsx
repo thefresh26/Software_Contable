@@ -57,7 +57,7 @@ export default function CotizacionLista() {
         <input type="date" className="input w-40" value={filters.fecha_hasta} onChange={e => setF('fecha_hasta', e.target.value)} />
         <button className="btn-secondary" onClick={() => setFilters({ estado: '', fecha_desde: '', fecha_hasta: '' })}>Limpiar</button>
       </div>
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b">
             <tr><th className="th">Número</th><th className="th">Cliente</th><th className="th">Fecha</th><th className="th">Vence</th><th className="th">Total</th><th className="th">Estado</th><th className="th" /></tr>

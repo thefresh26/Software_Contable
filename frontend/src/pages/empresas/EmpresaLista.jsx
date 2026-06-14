@@ -85,7 +85,7 @@ export default function EmpresaLista() {
                     </span>
                   )}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => abrirUsuarios(empresa)}
                     className="text-sm border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50"
@@ -110,8 +110,8 @@ export default function EmpresaLista() {
 
       {/* Modal Usuarios */}
       {modalUsuarios && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Usuarios — {modalUsuarios.nombre}</h3>
               <button onClick={() => setModalUsuarios(null)} className="text-gray-400 hover:text-gray-600 text-xl">

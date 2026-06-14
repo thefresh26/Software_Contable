@@ -79,6 +79,7 @@ export default function CotizacionNueva() {
             <h2 className="font-semibold text-gray-700 text-sm">Ítems</h2>
             <button type="button" onClick={() => setLines(p => [...p, { ...EMPTY }])} className="text-blue-600 text-sm hover:underline">+ Agregar ítem</button>
           </div>
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="border-b bg-gray-50"><tr><th className="th w-48">Producto</th><th className="th">Descripción</th><th className="th w-20">Cant.</th><th className="th w-28">P. Unitario</th><th className="th w-20">IVA %</th><th className="th w-28 text-right">Total</th><th className="th w-8" /></tr></thead>
             <tbody className="divide-y">
@@ -98,6 +99,7 @@ export default function CotizacionNueva() {
               })}
             </tbody>
           </table>
+          </div>
         </div>
 
         <div className="flex justify-end">

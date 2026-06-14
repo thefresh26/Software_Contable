@@ -47,6 +47,7 @@ export default function PresupuestoNuevo() {
             <h2 className="font-semibold text-sm text-gray-700">Líneas de Presupuesto</h2>
             <button type="button" onClick={addItem} className="text-blue-600 text-sm hover:underline">+ Agregar línea</button>
           </div>
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b"><tr><th className="th">Cuenta</th><th className="th">Descripción</th><th className="th w-40">Valor Presupuestado</th><th className="th w-8" /></tr></thead>
             <tbody className="divide-y">
@@ -70,6 +71,7 @@ export default function PresupuestoNuevo() {
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
 
         <div className="flex gap-3">

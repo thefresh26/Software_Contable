@@ -21,7 +21,7 @@ function Modal({ item, centros, onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center px-6 py-4 border-b">
           <h2 className="font-semibold">{item?.id ? 'Editar' : 'Nuevo'} Centro de Costo</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
@@ -72,7 +72,7 @@ export default function CentrosCosto() {
         <h1 className="text-2xl font-bold text-slate-800">Centros de Costo</h1>
         <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo</button>
       </div>
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b"><tr><th className="th">Código</th><th className="th">Nombre</th><th className="th">Padre</th><th className="th">Estado</th><th className="th" /></tr></thead>
           <tbody className="divide-y divide-gray-100">

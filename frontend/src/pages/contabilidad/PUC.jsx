@@ -22,7 +22,7 @@ function Modal({ item, cuentas, onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center px-6 py-4 border-b">
           <h2 className="font-semibold">{item?.id ? 'Editar' : 'Nueva'} Cuenta PUC</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
@@ -98,14 +98,14 @@ export default function PUC() {
         <h1 className="text-2xl font-bold text-slate-800">Plan de Cuentas PUC</h1>
         <button className="btn-primary" onClick={() => setModal(true)}>+ Nueva Cuenta</button>
       </div>
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <input className="input max-w-xs" placeholder="Buscar código o nombre…" value={search} onChange={(e) => setSearch(e.target.value)} />
         <select className="input w-36" value={tipoF} onChange={(e) => setTipoF(e.target.value)}>
           <option value="">Todos</option>
           {TIPOS.map((t) => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
         </select>
       </div>
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b">
             <tr><th className="th">Código</th><th className="th">Nombre</th><th className="th">Tipo</th><th className="th">Nivel</th><th className="th">Mov.</th><th className="th" /></tr>

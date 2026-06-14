@@ -47,10 +47,11 @@ export default function PresupuestoLista() {
 
             {expanded === p.id && ejecucion[p.id] && (
               <div className="border-t">
-                <div className="px-5 py-3 bg-blue-50 flex justify-between text-sm font-medium">
+                <div className="px-5 py-3 bg-blue-50 flex flex-wrap gap-2 justify-between text-sm font-medium">
                   <span>Presupuestado: {fmt(ejecucion[p.id].total_presupuestado)}</span>
                   <span>Ejecutado: {fmt(ejecucion[p.id].total_ejecutado)}</span>
                 </div>
+                <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b"><tr><th className="th">Cuenta</th><th className="th">Descripción</th><th className="th text-right">Presupuestado</th><th className="th text-right">Ejecutado</th><th className="th text-right">Diferencia</th><th className="th text-right">% Ejec.</th></tr></thead>
                   <tbody className="divide-y">
@@ -71,6 +72,7 @@ export default function PresupuestoLista() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
             )}
           </div>

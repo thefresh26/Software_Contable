@@ -43,6 +43,7 @@ function ModalAsiento({ cuentas, onClose, onSaved }) {
             <div><label className="label">Fecha *</label><input className="input" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required /></div>
             <div><label className="label">Descripción *</label><input className="input" value={desc} onChange={(e) => setDesc(e.target.value)} required /></div>
           </div>
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b">
               <tr><th className="th">Cuenta</th><th className="th">Descripción</th><th className="th w-28">Débito</th><th className="th w-28">Crédito</th><th className="th w-8" /></tr>
@@ -70,6 +71,7 @@ function ModalAsiento({ cuentas, onClose, onSaved }) {
               </tr>
             </tbody>
           </table>
+          </div>
           {!cuadrado && <p className="text-red-500 text-xs">⚠ Diferencia: {fmt(Math.abs(totDeb - totCre))}</p>}
           <div className="flex justify-between items-center">
             <button type="button" onClick={addLine} className="text-blue-600 text-sm hover:underline">+ Agregar línea</button>
@@ -113,7 +115,7 @@ export default function Asientos() {
         <button className="btn-primary" onClick={() => setModal(true)}>+ Asiento Manual</button>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <input type="date" className="input w-40" value={desde} onChange={(e) => setDesde(e.target.value)} />
         <span className="self-center text-gray-400">a</span>
         <input type="date" className="input w-40" value={hasta} onChange={(e) => setHasta(e.target.value)} />
@@ -143,7 +145,7 @@ export default function Asientos() {
               </div>
             </button>
             {expanded === a.id && (
-              <div className="border-t">
+              <div className="border-t overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50"><tr><th className="th">Cuenta</th><th className="th">Descripción</th><th className="th text-right">Débito</th><th className="th text-right">Crédito</th></tr></thead>
                   <tbody className="divide-y divide-gray-100">

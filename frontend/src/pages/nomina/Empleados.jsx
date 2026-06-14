@@ -90,7 +90,7 @@ export default function Empleados() {
         <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo Empleado</button>
       </div>
       <input className="input max-w-xs" placeholder="Buscar por nombre o cédula…" value={search} onChange={(e) => setSearch(e.target.value)} />
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b">
             <tr><th className="th">Nombre</th><th className="th">Cédula</th><th className="th">Cargo</th><th className="th">Dept.</th><th className="th">Salario</th><th className="th">Contrato</th><th className="th">Estado</th><th className="th" /></tr>

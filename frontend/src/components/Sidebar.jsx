@@ -76,7 +76,7 @@ const nav = [
 ]
 
 const linkCls = ({ isActive }) =>
-  `flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${
+  `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors min-h-[44px] ${
     isActive ? 'bg-blue-700 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'
   }`
 
@@ -125,7 +125,7 @@ function EmpresaSelector({ user, onCambiar }) {
   )
 }
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const { user, logout, cambiarEmpresa } = useAuth()
   const rol = user?.rol || 'auxiliar'
 
@@ -134,14 +134,34 @@ export default function Sidebar() {
     return item.roles.includes(rol) || user?.is_superuser
   }
 
+  const handleLinkClick = () => {
+    if (window.innerWidth < 768) onClose()
+  }
+
   return (
-    <aside className="w-56 min-h-screen bg-slate-800 flex flex-col shrink-0">
-      <div className="px-4 py-4 border-b border-slate-700">
-        <p className="text-white font-bold text-lg">ContaApp</p>
-        <EmpresaSelector user={user} onCambiar={cambiarEmpresa} />
-        <span className="inline-block mt-1 text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">
-          {rol}
-        </span>
+    <aside
+      className={`
+        fixed inset-y-0 left-0 z-40 w-64 md:w-56 bg-slate-800 flex flex-col shrink-0
+        transform transition-transform duration-200 ease-in-out
+        md:relative md:translate-x-0
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}
+    >
+      <div className="px-4 py-4 border-b border-slate-700 flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          <p className="text-white font-bold text-lg">ContaApp</p>
+          <EmpresaSelector user={user} onCambiar={cambiarEmpresa} />
+          <span className="inline-block mt-1 text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">
+            {rol}
+          </span>
+        </div>
+        <button
+          onClick={onClose}
+          className="md:hidden ml-2 mt-1 text-slate-400 hover:text-white text-lg leading-none"
+          aria-label="Cerrar menú"
+        >
+          ✕
+        </button>
       </div>
 
       <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto text-sm">
@@ -156,7 +176,12 @@ export default function Sidebar() {
                   {item.icon} {item.label}
                 </p>
                 {visibles.map((child) => (
-                  <NavLink key={child.to} to={child.to} className={linkCls}>
+                  <NavLink
+                    key={child.to}
+                    to={child.to}
+                    className={linkCls}
+                    onClick={handleLinkClick}
+                  >
                     {child.label}
                   </NavLink>
                 ))}
@@ -164,7 +189,13 @@ export default function Sidebar() {
             )
           }
           return (
-            <NavLink key={item.to} to={item.to} className={linkCls} end={item.to === '/'}>
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={linkCls}
+              end={item.to === '/'}
+              onClick={handleLinkClick}
+            >
               {item.icon} {item.label}
             </NavLink>
           )
@@ -173,7 +204,7 @@ export default function Sidebar() {
 
       <div className="px-4 py-3 border-t border-slate-700">
         <p className="text-slate-400 text-xs mb-1 truncate">{user?.username}</p>
-        <button onClick={logout} className="w-full text-left text-xs text-slate-400 hover:text-white">
+        <button onClick={logout} className="w-full text-left text-xs text-slate-400 hover:text-white py-1">
           Cerrar sesión →
         </button>
       </div>

@@ -69,9 +69,9 @@ export default function NotificacionesLista() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold text-slate-800">Notificaciones</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button onClick={marcarTodas} className="btn-secondary">Marcar todas como leídas</button>
           <button onClick={limpiarLeidas} className="btn-danger">Limpiar leídas</button>
         </div>

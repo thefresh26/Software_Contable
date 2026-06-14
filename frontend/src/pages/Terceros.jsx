@@ -22,7 +22,7 @@ function Modal({ item, onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center px-6 py-4 border-b">
           <h2 className="font-semibold text-gray-800">{item?.id ? 'Editar' : 'Nuevo'} Tercero</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
@@ -120,7 +120,7 @@ export default function Terceros() {
         <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo</button>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <input className="input max-w-xs" placeholder="Buscar por nombre o NIT…" value={search} onChange={(e) => setSearch(e.target.value)} />
         <select className="input w-40" value={tipo} onChange={(e) => setTipo(e.target.value)}>
           <option value="">Todos</option>
@@ -130,7 +130,7 @@ export default function Terceros() {
         </select>
       </div>
 
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b">
             <tr>

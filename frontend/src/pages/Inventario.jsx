@@ -40,12 +40,12 @@ function ModalProducto({ item, categorias, onClose, onSaved }) {
           </div>
           <div><label className="label">Nombre *</label><input className="input" value={form.nombre} onChange={(e) => set('nombre', e.target.value)} required /></div>
           <div><label className="label">Descripción</label><textarea className="input" rows={2} value={form.descripcion} onChange={(e) => set('descripcion', e.target.value)} /></div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div><label className="label">Precio compra</label><input className="input" type="number" step="0.01" value={form.precio_compra} onChange={(e) => set('precio_compra', e.target.value)} /></div>
             <div><label className="label">Precio venta</label><input className="input" type="number" step="0.01" value={form.precio_venta} onChange={(e) => set('precio_venta', e.target.value)} /></div>
             <div><label className="label">IVA %</label><input className="input" type="number" step="0.01" value={form.iva_porcentaje} onChange={(e) => set('iva_porcentaje', e.target.value)} /></div>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div><label className="label">Stock actual</label><input className="input" type="number" value={form.stock_actual} onChange={(e) => set('stock_actual', e.target.value)} /></div>
             <div><label className="label">Stock mínimo</label><input className="input" type="number" value={form.stock_minimo} onChange={(e) => set('stock_minimo', e.target.value)} /></div>
             <div><label className="label">Unidad</label><input className="input" value={form.unidad_medida} onChange={(e) => set('unidad_medida', e.target.value)} /></div>
@@ -92,7 +92,7 @@ export default function Inventario() {
         <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo Producto</button>
       </div>
 
-      <div className="flex gap-3 items-center">
+      <div className="flex flex-wrap gap-3 items-center">
         <input className="input max-w-xs" placeholder="Buscar producto…" value={search} onChange={(e) => setSearch(e.target.value)} />
         <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
           <input type="checkbox" checked={soloBajo} onChange={(e) => setSoloBajo(e.target.checked)} className="rounded" />
@@ -100,7 +100,7 @@ export default function Inventario() {
         </label>
       </div>
 
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b">
             <tr>

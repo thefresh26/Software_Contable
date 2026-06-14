@@ -42,7 +42,7 @@ export default function TablaDepreciacion() {
         <div className="card"><p className="text-xs text-gray-500">Vida útil</p><p className="text-lg font-bold text-slate-800">{tabla.vida_util_meses} meses</p></div>
       </div>
 
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b">
             <tr>

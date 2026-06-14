@@ -66,7 +66,7 @@ export default function FacturaLista() {
         <button className="btn-secondary" onClick={() => setFilters({ tipo: '', estado: '', fecha_desde: '', fecha_hasta: '' })}>Limpiar</button>
       </div>
 
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b">
             <tr>

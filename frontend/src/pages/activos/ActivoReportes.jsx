@@ -45,7 +45,7 @@ export default function ActivoReportes() {
         <Card label="Valor en libros total" value={fmt(resumen.valor_en_libros)} color="green" />
       </div>
 
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <div className="px-5 py-3 bg-gray-50 border-b">
           <h2 className="font-semibold text-sm text-gray-700">Activos por categoría</h2>
         </div>
@@ -73,7 +73,7 @@ export default function ActivoReportes() {
         </table>
       </div>
 
-      <div className="card p-0 overflow-hidden">
+      <div className="card p-0 overflow-x-auto">
         <div className="px-5 py-3 bg-gray-50 border-b">
           <h2 className="font-semibold text-sm text-gray-700">Próximos a depreciarse completamente (12 meses)</h2>
         </div>
