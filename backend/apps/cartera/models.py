@@ -95,6 +95,27 @@ class CuentaPorPagar(models.Model):
         self.save(update_fields=['estado', 'valor_pagado', 'valor_pendiente'])
 
 
+class DescuentoProntoPago(models.Model):
+    cuenta_cobrar = models.ForeignKey(
+        'CuentaPorCobrar', on_delete=models.CASCADE, related_name='descuentos'
+    )
+    porcentaje = models.DecimalField(max_digits=5, decimal_places=2)
+    dias_plazo = models.IntegerField()
+    fecha_limite = models.DateField()
+    valor_descuento = models.DecimalField(max_digits=15, decimal_places=2)
+    aplicado = models.BooleanField(default=False)
+    fecha_aplicacion = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Descuento por Pronto Pago'
+        verbose_name_plural = 'Descuentos por Pronto Pago'
+        ordering = ['fecha_limite']
+
+    def __str__(self):
+        return f"Dto {self.porcentaje}% CxC#{self.cuenta_cobrar_id} — hasta {self.fecha_limite}"
+
+
 def _recalcular_cxc(cuenta_cobrar_id):
     """Recalcula valor_pagado de CxC desde la DB (evita cache de FK)."""
     from django.db.models import Sum

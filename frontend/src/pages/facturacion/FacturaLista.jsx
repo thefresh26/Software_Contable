@@ -7,6 +7,11 @@ const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', c
 
 const estadoBadge = { borrador: 'badge-gray', emitida: 'badge-green', pagada: 'badge-blue', anulada: 'badge-red' }
 const tipoLabel = { FV: 'Fact. Venta', FC: 'Fact. Compra', NC: 'Nota Crédito', ND: 'Nota Débito' }
+const tipoBadgeCls = {
+  FV: 'badge-green', FC: 'badge-blue',
+  NC: 'bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs font-medium',
+  ND: 'bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs font-medium',
+}
 
 export default function FacturaLista() {
   const [data, setData] = useState([])
@@ -61,6 +66,8 @@ export default function FacturaLista() {
           >
             {exportando ? '…' : '⬇ Excel'}
           </button>
+            <Link to="/facturacion/nota-credito/nueva" className="btn-secondary text-sm">+ NC</Link>
+          <Link to="/facturacion/nota-debito/nueva" className="btn-secondary text-sm">+ ND</Link>
           <Link to="/facturacion/nueva" className="btn-primary">+ Nueva Factura</Link>
         </div>
       </div>
@@ -100,7 +107,7 @@ export default function FacturaLista() {
             ) : data.map((f) => (
               <tr key={f.id} className="hover:bg-gray-50">
                 <td className="td font-mono text-xs font-semibold">{f.numero}</td>
-                <td className="td"><span className="badge-gray">{tipoLabel[f.tipo]}</span></td>
+                <td className="td"><span className={tipoBadgeCls[f.tipo] || 'badge-gray'}>{tipoLabel[f.tipo]}</span></td>
                 <td className="td">{f.tercero_nombre}</td>
                 <td className="td">{f.fecha}</td>
                 <td className="td font-medium">{fmt(f.total)}</td>

@@ -7,12 +7,16 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 
+import datetime
+from rest_framework.views import APIView
+
 from apps.empresas.mixins import EmpresaFilterMixin
 from apps.core.excel_utils import nuevo_libro, ajustar_columnas, excel_response
-from .models import CuentaPUC, AsientoContable, MovimientoContable, CentroCosto, CierrePeriodo
+from .models import CuentaPUC, AsientoContable, MovimientoContable, CentroCosto, CierrePeriodo, FlujoCaja
 from .serializers import (
     CuentaPUCSerializer, AsientoContableSerializer,
     AsientoContableCreateSerializer, CentroCostoSerializer, CierrePeriodoSerializer,
+    FlujoCajaSerializer,
 )
 
 
@@ -441,3 +445,132 @@ class CierrePeriodoViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
         cierre.cerrado_at = None
         cierre.save()
         return Response(CierrePeriodoSerializer(cierre).data)
+
+
+class FlujoCajaViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
+    queryset = FlujoCaja.objects.select_related('cuenta_bancaria', 'factura').all()
+    serializer_class = FlujoCajaSerializer
+    filterset_fields = ['tipo', 'es_proyectado', 'cuenta_bancaria']
+
+    def perform_create(self, serializer):
+        serializer.save(empresa=getattr(self.request, 'empresa_activa', None))
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        desde = self.request.query_params.get('desde')
+        hasta = self.request.query_params.get('hasta')
+        if desde:
+            qs = qs.filter(fecha__gte=desde)
+        if hasta:
+            qs = qs.filter(fecha__lte=hasta)
+        return qs
+
+    @action(detail=False, methods=['get'])
+    def resumen(self, request):
+        empresa = getattr(request, 'empresa_activa', None)
+        qs = FlujoCaja.objects.filter(empresa=empresa)
+        ingresos = qs.filter(tipo='ingreso').aggregate(s=Sum('valor'))['s'] or Decimal('0')
+        egresos = qs.filter(tipo='egreso').aggregate(s=Sum('valor'))['s'] or Decimal('0')
+        return Response({
+            'total_ingresos': ingresos,
+            'total_egresos': egresos,
+            'saldo': ingresos - egresos,
+        })
+
+    @action(detail=False, methods=['get'])
+    def proyeccion(self, request):
+        meses = int(request.query_params.get('meses', 3))
+        empresa = getattr(request, 'empresa_activa', None)
+        hoy = datetime.date.today()
+        resultado = []
+        for i in range(meses):
+            mes = hoy.month + i
+            year = hoy.year + (mes - 1) // 12
+            mes = ((mes - 1) % 12) + 1
+            primer_dia = datetime.date(year, mes, 1)
+            import calendar
+            ultimo_dia = datetime.date(year, mes, calendar.monthrange(year, mes)[1])
+            qs = FlujoCaja.objects.filter(empresa=empresa, fecha__range=[primer_dia, ultimo_dia])
+            ingresos = qs.filter(tipo='ingreso').aggregate(s=Sum('valor'))['s'] or Decimal('0')
+            egresos = qs.filter(tipo='egreso').aggregate(s=Sum('valor'))['s'] or Decimal('0')
+            resultado.append({
+                'mes': primer_dia.strftime('%Y-%m'),
+                'ingresos': ingresos,
+                'egresos': egresos,
+                'saldo': ingresos - egresos,
+            })
+        return Response(resultado)
+
+    @action(detail=False, methods=['get'], url_path='exportar')
+    def exportar(self, request):
+        empresa = getattr(request, 'empresa_activa', None)
+        empresa_nombre = empresa.nombre if empresa else 'Mi Empresa'
+        qs = self.get_queryset()
+        cabeceras = ['Fecha', 'Tipo', 'Concepto', 'Valor', 'Cuenta', 'Proyectado']
+        wb, ws, _ = nuevo_libro('Flujo de Caja', empresa_nombre, 'Flujo de Caja', cabeceras)
+        for f in qs:
+            ws.append([
+                str(f.fecha), f.get_tipo_display(), f.concepto, float(f.valor),
+                f.cuenta_bancaria.nombre if f.cuenta_bancaria else '',
+                'Sí' if f.es_proyectado else 'No',
+            ])
+        ajustar_columnas(ws)
+        return excel_response(wb, 'flujo_caja.xlsx')
+
+
+# ── Modelos disponibles para Reportes Personalizables ─────────────────────────
+_MODELOS_REPORTE = {
+    'facturas': ('apps.facturacion.models', 'Factura'),
+    'terceros': ('apps.terceros.models', 'Tercero'),
+    'movimientos': ('apps.contabilidad.models', 'MovimientoContable'),
+    'productos': ('apps.inventario.models', 'Producto'),
+    'empleados': ('apps.nomina.models', 'Empleado'),
+}
+
+
+class ReportePersonalizadoView(APIView):
+    def post(self, request):
+        config = request.data
+        modelo_key = config.get('modelo', '')
+        campos = config.get('campos', [])
+        filtros = config.get('filtros', {})
+        formato = config.get('formato', 'json')
+        empresa = getattr(request, 'empresa_activa', None)
+
+        if modelo_key not in _MODELOS_REPORTE:
+            return Response({'error': f'Modelo no válido. Opciones: {list(_MODELOS_REPORTE)}'}, status=400)
+
+        import importlib
+        modulo_nombre, clase_nombre = _MODELOS_REPORTE[modelo_key]
+        modulo = importlib.import_module(modulo_nombre)
+        Modelo = getattr(modulo, clase_nombre)
+
+        qs = Modelo.objects.all()
+        if hasattr(Modelo, 'empresa'):
+            qs = qs.filter(empresa=empresa)
+
+        # Filtros dinámicos
+        filtros_validos = {}
+        for campo, valor in filtros.items():
+            if valor not in ('', None):
+                filtros_validos[campo] = valor
+        if filtros_validos:
+            try:
+                qs = qs.filter(**filtros_validos)
+            except Exception:
+                pass
+
+        # Limitar preview
+        if formato == 'json':
+            qs = qs[:10]
+            datos = list(qs.values(*campos) if campos else qs.values())
+            return Response({'modelo': modelo_key, 'campos': campos, 'datos': datos, 'total': len(datos)})
+
+        # Excel
+        empresa_nombre = empresa.nombre if empresa else 'Mi Empresa'
+        cabeceras = campos if campos else [f.name for f in Modelo._meta.get_fields() if hasattr(f, 'name')][:10]
+        wb, ws, _ = nuevo_libro('Reporte', empresa_nombre, f'Reporte {modelo_key}', cabeceras)
+        for obj in qs.values(*cabeceras):
+            ws.append([str(obj.get(c, '')) for c in cabeceras])
+        ajustar_columnas(ws)
+        return excel_response(wb, f'reporte_{modelo_key}.xlsx')

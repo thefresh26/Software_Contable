@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.http import HttpResponse
 from django.db import transaction
 from rest_framework import viewsets, status
@@ -8,10 +9,11 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from apps.empresas.mixins import EmpresaFilterMixin
 from apps.core.excel_utils import nuevo_libro, ajustar_columnas, excel_response
-from .models import Factura, DetalleFactura, TipoRetencion, MedioPago
+from .models import Factura, DetalleFactura, TipoRetencion, MedioPago, Anticipo, AplicacionAnticipo, ResolucionDIAN
 from .serializers import (
     FacturaSerializer, FacturaCreateSerializer, DetalleFacturaSerializer,
     TipoRetencionSerializer, RetencionFacturaSerializer, MedioPagoSerializer,
+    AnticipoSerializer, AplicacionAnticipoSerializer, ResolucionDIANSerializer,
 )
 from .signals import (
     generar_asiento_factura_venta, generar_asiento_factura_compra,
@@ -169,3 +171,76 @@ class DetalleFacturaViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
     serializer_class = DetalleFacturaSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['factura']
+
+
+class AnticipoViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
+    queryset = Anticipo.objects.select_related('tercero').prefetch_related('aplicaciones').all()
+    serializer_class = AnticipoSerializer
+    filterset_fields = ['tipo', 'estado', 'tercero']
+
+    def perform_create(self, serializer):
+        serializer.save(empresa=getattr(self.request, 'empresa_activa', None))
+
+    @action(detail=True, methods=['post'])
+    def aplicar(self, request, pk=None):
+        anticipo = self.get_object()
+        if anticipo.estado != 'activo':
+            return Response({'error': 'El anticipo no está activo.'}, status=400)
+        factura_id = request.data.get('factura_id')
+        valor = request.data.get('valor')
+        if not factura_id or not valor:
+            return Response({'error': 'Se requieren factura_id y valor.'}, status=400)
+        valor = Decimal(str(valor))
+        if valor > anticipo.valor_disponible:
+            return Response({'error': f'Valor excede el disponible ({anticipo.valor_disponible}).'}, status=400)
+        try:
+            factura = Factura.objects.get(pk=factura_id)
+        except Factura.DoesNotExist:
+            return Response({'error': 'Factura no encontrada.'}, status=404)
+        import datetime as dt
+        aplicacion = AplicacionAnticipo.objects.create(
+            anticipo=anticipo, factura=factura,
+            valor_aplicado=valor, fecha=dt.date.today()
+        )
+        anticipo.valor_aplicado += valor
+        anticipo.valor_disponible -= valor
+        if anticipo.valor_disponible <= 0:
+            anticipo.estado = 'aplicado'
+        anticipo.save(update_fields=['valor_aplicado', 'valor_disponible', 'estado'])
+        return Response(AplicacionAnticipoSerializer(aplicacion).data, status=201)
+
+    @action(detail=True, methods=['post'])
+    def devolver(self, request, pk=None):
+        anticipo = self.get_object()
+        if anticipo.estado == 'devuelto':
+            return Response({'error': 'El anticipo ya fue devuelto.'}, status=400)
+        anticipo.estado = 'devuelto'
+        anticipo.save(update_fields=['estado'])
+        return Response(AnticipoSerializer(anticipo).data)
+
+
+class ResolucionDIANViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
+    queryset = ResolucionDIAN.objects.all()
+    serializer_class = ResolucionDIANSerializer
+    filterset_fields = ['activa', 'tipo']
+
+    def perform_create(self, serializer):
+        serializer.save(empresa=getattr(self.request, 'empresa_activa', None))
+
+    @action(detail=True, methods=['post'])
+    def activar(self, request, pk=None):
+        res = self.get_object()
+        empresa = getattr(request, 'empresa_activa', None)
+        ResolucionDIAN.objects.filter(empresa=empresa, tipo=res.tipo).update(activa=False)
+        res.activa = True
+        res.save(update_fields=['activa'])
+        return Response(ResolucionDIANSerializer(res).data)
+
+    @action(detail=False, methods=['get'])
+    def activa(self, request):
+        empresa = getattr(request, 'empresa_activa', None)
+        tipo = request.query_params.get('tipo', 'venta')
+        res = ResolucionDIAN.objects.filter(empresa=empresa, activa=True, tipo=tipo).first()
+        if not res:
+            return Response({'error': 'No hay resolución activa.'}, status=404)
+        return Response(ResolucionDIANSerializer(res).data)

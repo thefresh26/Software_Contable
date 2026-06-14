@@ -1,8 +1,52 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import api from '../api/client'
 import { descargarExcel } from '../utils/excel'
 
 const EMPTY = { tipo: 'cliente', tipo_persona: 'natural', nombre: '', nit: '', email: '', telefono: '', direccion: '', ciudad: '' }
+
+function NitInput({ value, onChange }) {
+  const [nitInfo, setNitInfo] = useState(null)
+
+  const checkNit = useCallback(async (nit) => {
+    if (nit.length < 3) { setNitInfo(null); return }
+    try {
+      const { data } = await api.get(`/auth/validar-nit/?nit=${encodeURIComponent(nit)}`)
+      setNitInfo(data)
+    } catch { setNitInfo(null) }
+  }, [])
+
+  const handleChange = (e) => {
+    const v = e.target.value
+    onChange(v)
+    checkNit(v)
+  }
+
+  return (
+    <div>
+      <label className="label">NIT / Cédula *</label>
+      <div className="relative">
+        <input
+          className="input pr-8"
+          value={value}
+          onChange={handleChange}
+          required
+          placeholder="123456789-0"
+          title="Formato: número-dígito verificador (ej: 900123456-7)"
+        />
+        {nitInfo && (
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm">
+            {nitInfo.valido ? '✅' : '❌'}
+          </span>
+        )}
+      </div>
+      {nitInfo && !nitInfo.valido && nitInfo.digito !== null && (
+        <p className="text-xs text-amber-600 mt-0.5">
+          Dígito verificador esperado: <strong>{nitInfo.digito}</strong>. Formato: {value.replace(/-.*/, '')}-{nitInfo.digito}
+        </p>
+      )}
+    </div>
+  )
+}
 
 function Modal({ item, onClose, onSaved }) {
   const [form, setForm] = useState(item || EMPTY)
@@ -17,7 +61,9 @@ function Modal({ item, onClose, onSaved }) {
       item?.id ? await api.put(`/terceros/${item.id}/`, form) : await api.post('/terceros/', form)
       onSaved()
     } catch (err) {
-      setError(JSON.stringify(err.response?.data || 'Error al guardar'))
+      const data = err.response?.data
+      const msg = typeof data === 'object' ? JSON.stringify(data) : String(data || 'Error al guardar')
+      setError(msg)
     } finally { setSaving(false) }
   }
 
@@ -52,10 +98,7 @@ function Modal({ item, onClose, onSaved }) {
             <input className="input" value={form.nombre} onChange={(e) => set('nombre', e.target.value)} required />
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="label">NIT / Cédula *</label>
-              <input className="input" value={form.nit} onChange={(e) => set('nit', e.target.value)} required />
-            </div>
+            <NitInput value={form.nit} onChange={(v) => set('nit', v)} />
             <div>
               <label className="label">Teléfono</label>
               <input className="input" value={form.telefono} onChange={(e) => set('telefono', e.target.value)} />
@@ -150,7 +193,11 @@ export default function Terceros() {
             ) : data.map((t) => (
               <tr key={t.id} className="hover:bg-gray-50">
                 <td className="td font-medium">{t.nombre}</td>
-                <td className="td">{t.nit}</td>
+                <td className="td font-mono text-xs">
+                  {t.nit}
+                  {t.nit_valido === false && <span className="ml-1 text-red-500" title="NIT inválido">❌</span>}
+                  {t.nit_valido === true && <span className="ml-1 text-green-500" title="NIT válido">✅</span>}
+                </td>
                 <td className="td"><span className={tipoBadge[t.tipo]}>{t.tipo}</span></td>
                 <td className="td">{t.ciudad}</td>
                 <td className="td">{t.telefono}</td>

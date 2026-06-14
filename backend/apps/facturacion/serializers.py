@@ -1,5 +1,43 @@
 from rest_framework import serializers
-from .models import Factura, DetalleFactura, TipoRetencion, RetencionFactura, MedioPago
+from .models import Factura, DetalleFactura, TipoRetencion, RetencionFactura, MedioPago, Anticipo, AplicacionAnticipo, ResolucionDIAN
+
+
+class AplicacionAnticipoSerializer(serializers.ModelSerializer):
+    factura_numero = serializers.CharField(source='factura.numero', read_only=True)
+
+    class Meta:
+        model = AplicacionAnticipo
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at']
+
+
+class AnticipoSerializer(serializers.ModelSerializer):
+    tercero_nombre = serializers.CharField(source='tercero.nombre', read_only=True)
+    tipo_display = serializers.CharField(source='get_tipo_display', read_only=True)
+    estado_display = serializers.CharField(source='get_estado_display', read_only=True)
+    aplicaciones = AplicacionAnticipoSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Anticipo
+        fields = '__all__'
+        read_only_fields = ['id', 'valor_aplicado', 'valor_disponible', 'estado', 'created_at']
+
+
+class ResolucionDIANSerializer(serializers.ModelSerializer):
+    porcentaje_uso = serializers.SerializerMethodField(read_only=True)
+    dias_para_vencer = serializers.SerializerMethodField(read_only=True)
+    tipo_display = serializers.CharField(source='get_tipo_display', read_only=True)
+
+    class Meta:
+        model = ResolucionDIAN
+        fields = '__all__'
+        read_only_fields = ['id', 'consecutivo_actual', 'created_at']
+
+    def get_porcentaje_uso(self, obj):
+        return obj.porcentaje_uso()
+
+    def get_dias_para_vencer(self, obj):
+        return obj.dias_para_vencer()
 
 
 class MedioPagoSerializer(serializers.ModelSerializer):

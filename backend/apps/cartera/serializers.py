@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from .models import CuentaPorCobrar, CuentaPorPagar, PagoRecibido, PagoRealizado
+from .models import CuentaPorCobrar, CuentaPorPagar, PagoRecibido, PagoRealizado, DescuentoProntoPago
+
+
+class DescuentoProntoPagoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DescuentoProntoPago
+        fields = '__all__'
+        read_only_fields = ['id', 'valor_descuento', 'aplicado', 'fecha_aplicacion', 'created_at']
 
 
 class PagoRecibidoSerializer(serializers.ModelSerializer):

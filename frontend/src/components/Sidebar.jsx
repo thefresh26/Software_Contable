@@ -15,6 +15,10 @@ const nav = [
       { label: 'Nueva Cotización', to: '/cotizaciones/nueva' },
       { label: 'Facturas', to: '/facturacion' },
       { label: 'Nueva Factura', to: '/facturacion/nueva' },
+      { label: 'Nota Crédito', to: '/facturacion/nota-credito/nueva' },
+      { label: 'Nota Débito', to: '/facturacion/nota-debito/nueva' },
+      { label: 'Anticipos', to: '/anticipos' },
+      { label: 'Resoluciones DIAN', to: '/facturacion/resoluciones' },
     ],
   },
   {
@@ -33,6 +37,8 @@ const nav = [
       { label: 'Reportes', to: '/contabilidad/reportes' },
       { label: 'Centros de Costo', to: '/contabilidad/centros-costo' },
       { label: 'Cierre de Período', to: '/contabilidad/cierres' },
+      { label: 'Flujo de Caja', to: '/contabilidad/flujo-caja' },
+      { label: 'Reporte Personalizado', to: '/reportes/personalizado' },
     ],
   },
   {
@@ -73,6 +79,7 @@ const nav = [
       { label: 'Usuarios', to: '/usuarios', roles: ['admin'] },
       { label: 'Importar Datos', to: '/importar' },
       { label: 'Centros de Costo', to: '/contabilidad/centros-costo' },
+      { label: 'Auditoría', to: '/auditoria', roles: ['admin'] },
     ],
   },
 ]

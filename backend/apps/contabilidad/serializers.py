@@ -1,5 +1,15 @@
 from rest_framework import serializers
-from .models import CuentaPUC, AsientoContable, MovimientoContable, CentroCosto, CierrePeriodo
+from .models import CuentaPUC, AsientoContable, MovimientoContable, CentroCosto, CierrePeriodo, FlujoCaja
+
+
+class FlujoCajaSerializer(serializers.ModelSerializer):
+    tipo_display = serializers.CharField(source='get_tipo_display', read_only=True)
+    cuenta_bancaria_nombre = serializers.CharField(source='cuenta_bancaria.nombre', read_only=True)
+
+    class Meta:
+        model = FlujoCaja
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at']
 
 
 class CierrePeriodoSerializer(serializers.ModelSerializer):

@@ -153,6 +153,35 @@ class AsientoContable(models.Model):
         return (totales['total_debito'] or 0) == (totales['total_credito'] or 0)
 
 
+class FlujoCaja(models.Model):
+    TIPOS = [('ingreso', 'Ingreso'), ('egreso', 'Egreso')]
+    empresa = models.ForeignKey(
+        'empresas.Empresa', on_delete=models.CASCADE, related_name='flujos_caja',
+    )
+    fecha = models.DateField()
+    tipo = models.CharField(max_length=10, choices=TIPOS)
+    concepto = models.CharField(max_length=200)
+    valor = models.DecimalField(max_digits=15, decimal_places=2)
+    cuenta_bancaria = models.ForeignKey(
+        'bancos.CuentaBancaria', null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='flujos_caja',
+    )
+    factura = models.ForeignKey(
+        'facturacion.Factura', null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='flujos_caja',
+    )
+    es_proyectado = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Flujo de Caja'
+        verbose_name_plural = 'Flujos de Caja'
+        ordering = ['fecha', 'created_at']
+
+    def __str__(self):
+        return f"{self.get_tipo_display()} — {self.concepto} — {self.valor}"
+
+
 class MovimientoContable(models.Model):
     asiento = models.ForeignKey(
         AsientoContable, on_delete=models.CASCADE, related_name='movimientos'

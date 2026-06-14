@@ -38,6 +38,13 @@ import Importar from './pages/Importar'
 import EmpresaLista from './pages/empresas/EmpresaLista'
 import EmpresaNueva from './pages/empresas/EmpresaNueva'
 import CierresPeriodo from './pages/contabilidad/CierresPeriodo'
+import FlujoCaja from './pages/contabilidad/FlujoCaja'
+import Anticipos from './pages/facturacion/Anticipos'
+import NotaCredito from './pages/facturacion/NotaCredito'
+import NotaDebito from './pages/facturacion/NotaDebito'
+import Auditoria from './pages/Auditoria'
+import ResolucionesDIAN from './pages/facturacion/ResolucionesDIAN'
+import ReportePersonalizado from './pages/ReportePersonalizado'
 
 export default function App() {
   return (
@@ -59,6 +66,13 @@ export default function App() {
             <Route path="contabilidad/reportes" element={<Reportes />} />
             <Route path="contabilidad/centros-costo" element={<CentrosCosto />} />
             <Route path="contabilidad/cierres" element={<CierresPeriodo />} />
+            <Route path="contabilidad/flujo-caja" element={<FlujoCaja />} />
+            <Route path="anticipos" element={<Anticipos />} />
+            <Route path="facturacion/nota-credito/nueva" element={<NotaCredito />} />
+            <Route path="facturacion/nota-debito/nueva" element={<NotaDebito />} />
+            <Route path="facturacion/resoluciones" element={<ResolucionesDIAN />} />
+            <Route path="auditoria" element={<Auditoria />} />
+            <Route path="reportes/personalizado" element={<ReportePersonalizado />} />
             <Route path="presupuestos" element={<PresupuestoLista />} />
             <Route path="presupuestos/nuevo" element={<PresupuestoNuevo />} />
             <Route path="activos" element={<ActivoLista />} />

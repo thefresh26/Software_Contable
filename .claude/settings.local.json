@@ -101,7 +101,8 @@
       "PowerShell(pip show *)",
       "PowerShell(& \"C:\\\\Users\\\\User\\\\Desktop\\\\CONTABILIDAD_LUISA\\\\backend\\\\venv\\\\Scripts\\\\python.exe\" \"C:\\\\Users\\\\User\\\\Desktop\\\\CONTABILIDAD_LUISA\\\\backend\\\\manage.py\" makemigrations contabilidad facturacion 2>&1)",
       "PowerShell(& \"C:\\\\Users\\\\User\\\\Desktop\\\\CONTABILIDAD_LUISA\\\\backend\\\\venv\\\\Scripts\\\\python.exe\" \"C:\\\\Users\\\\User\\\\Desktop\\\\CONTABILIDAD_LUISA\\\\backend\\\\manage.py\" migrate --run-syncdb 2>&1 | Select-Object -Last 20)",
-      "PowerShell(ls \"C:\\\\Users\\\\User\\\\Desktop\\\\CONTABILIDAD_LUISA\\\\backend\\\\apps\\\\contabilidad\\\\migrations\" | Where-Object { $_.Name -match \"006\" } | Select-Object Name; ls \"C:\\\\Users\\\\User\\\\Desktop\\\\CONTABILIDAD_LUISA\\\\backend\\\\apps\\\\facturacion\\\\migrations\" | Where-Object { $_.Name -match \"005\" } | Select-Object Name)"
+      "PowerShell(ls \"C:\\\\Users\\\\User\\\\Desktop\\\\CONTABILIDAD_LUISA\\\\backend\\\\apps\\\\contabilidad\\\\migrations\" | Where-Object { $_.Name -match \"006\" } | Select-Object Name; ls \"C:\\\\Users\\\\User\\\\Desktop\\\\CONTABILIDAD_LUISA\\\\backend\\\\apps\\\\facturacion\\\\migrations\" | Where-Object { $_.Name -match \"005\" } | Select-Object Name)",
+      "Bash(git commit *s)"
     ]
   }
 }

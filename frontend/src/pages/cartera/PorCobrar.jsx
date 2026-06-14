@@ -2,6 +2,49 @@ import { useEffect, useState } from 'react'
 import api from '../../api/client'
 import { descargarExcel } from '../../utils/excel'
 
+function ModalDescuento({ cuenta, onClose, onSaved }) {
+  const [form, setForm] = useState({ porcentaje: '', dias_plazo: '' })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  const submit = async (e) => {
+    e.preventDefault(); setSaving(true); setError('')
+    try {
+      await api.post(`/cartera/por-cobrar/${cuenta.id}/configurar-descuento/`, form)
+      onSaved()
+    } catch (err) { setError(err.response?.data?.error || 'Error') }
+    finally { setSaving(false) }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-sm">
+        <div className="flex justify-between items-center px-6 py-4 border-b">
+          <h2 className="font-semibold">Configurar Descuento Pronto Pago</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+        </div>
+        <form onSubmit={submit} className="px-6 py-4 space-y-3">
+          {error && <p className="text-red-600 text-sm">{error}</p>}
+          <p className="text-sm text-gray-500">Pendiente: <strong>{Number(cuenta.valor_pendiente).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}</strong></p>
+          <div>
+            <label className="label">% de Descuento *</label>
+            <input className="input" type="number" min="0.01" max="100" step="0.01" value={form.porcentaje} onChange={e => setForm(f => ({ ...f, porcentaje: e.target.value }))} required />
+          </div>
+          <div>
+            <label className="label">Días de plazo *</label>
+            <input className="input" type="number" min="1" value={form.dias_plazo} onChange={e => setForm(f => ({ ...f, dias_plazo: e.target.value }))} required />
+            <p className="text-xs text-gray-400 mt-0.5">Si el cliente paga en este plazo, se aplica el descuento.</p>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <button type="button" onClick={onClose} className="btn-secondary">Cancelar</button>
+            <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Guardando…' : 'Configurar'}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 const estadoBadge = { pendiente: 'badge-yellow', parcial: 'badge-gray', pagada: 'badge-green', vencida: 'badge-red' }
 
@@ -58,6 +101,7 @@ export default function PorCobrar() {
   const [loading, setLoading] = useState(true)
   const [estadoF, setEstadoF] = useState('')
   const [modal, setModal] = useState(null)
+  const [modalDescuento, setModalDescuento] = useState(null)
 
   const load = () => {
     setLoading(true)
@@ -71,6 +115,7 @@ export default function PorCobrar() {
   return (
     <div className="space-y-4">
       {modal && <ModalPago cuenta={modal} tipo="por-cobrar" onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }} />}
+      {modalDescuento && <ModalDescuento cuenta={modalDescuento} onClose={() => setModalDescuento(null)} onSaved={() => { setModalDescuento(null); load() }} />}
       <div className="flex flex-wrap justify-between items-center gap-2">
         <h1 className="text-2xl font-bold text-slate-800">Cuentas por Cobrar</h1>
         <button className="btn-excel" onClick={() => descargarExcel('/cartera/exportar/por-cobrar/', 'por_cobrar.xlsx').catch(() => alert('Error al exportar'))}>⬇ Excel</button>
@@ -95,8 +140,22 @@ export default function PorCobrar() {
                 <td className="td text-right">{fmt(c.valor_total)}</td>
                 <td className="td text-right text-green-600">{fmt(c.valor_pagado)}</td>
                 <td className="td text-right font-semibold">{fmt(c.valor_pendiente)}</td>
-                <td className="td"><span className={estadoBadge[c.estado]}>{c.estado}</span></td>
-                <td className="td">{c.estado !== 'pagada' && <button className="text-blue-600 hover:underline text-xs" onClick={() => setModal(c)}>Registrar Pago</button>}</td>
+                <td className="td">
+                  <div className="flex flex-col gap-0.5">
+                    <span className={estadoBadge[c.estado]}>{c.estado}</span>
+                    {c.descuentos?.some(d => !d.aplicado) && (
+                      <span className="text-xs text-green-600 font-medium">💚 Dto. disponible</span>
+                    )}
+                  </div>
+                </td>
+                <td className="td">
+                  {c.estado !== 'pagada' && (
+                    <div className="flex flex-col gap-1">
+                      <button className="text-blue-600 hover:underline text-xs" onClick={() => setModal(c)}>Registrar Pago</button>
+                      <button className="text-green-600 hover:underline text-xs" onClick={() => setModalDescuento(c)}>+ Descuento</button>
+                    </div>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
