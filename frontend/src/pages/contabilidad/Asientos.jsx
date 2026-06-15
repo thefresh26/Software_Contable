@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/client'
 import { descargarExcel } from '../../utils/excel'
+import { useToast } from '../../context/ToastContext'
+import { parseApiError } from '../../utils/errorMessages'
+import EmptyState from '../../components/ui/EmptyState'
+import { HelpIcon } from '../../components/ui/Tooltip'
 
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 const EMPTY_LINE = { cuenta: '', descripcion: '', debito: 0, credito: 0 }
@@ -11,6 +15,7 @@ function ModalAsiento({ cuentas, onClose, onSaved }) {
   const [lines, setLines] = useState([{ ...EMPTY_LINE }, { ...EMPTY_LINE }])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const toast = useToast()
 
   const setLine = (i, k, v) => setLines((prev) => { const n = [...prev]; n[i] = { ...n[i], [k]: v }; return n })
   const addLine = () => setLines((p) => [...p, { ...EMPTY_LINE }])
@@ -26,8 +31,9 @@ function ModalAsiento({ cuentas, onClose, onSaved }) {
     setSaving(true); setError('')
     try {
       await api.post('/contabilidad/asientos/', { fecha, descripcion: desc, es_manual: true, movimientos: lines })
+      toast.success('Asiento contable creado correctamente.')
       onSaved()
-    } catch (err) { setError(JSON.stringify(err.response?.data || 'Error')) }
+    } catch (err) { setError(parseApiError(err)) }
     finally { setSaving(false) }
   }
 
@@ -35,7 +41,10 @@ function ModalAsiento({ cuentas, onClose, onSaved }) {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center px-6 py-4 border-b sticky top-0 bg-white">
-          <h2 className="font-semibold">Nuevo Asiento Manual</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="font-semibold">Nuevo Asiento Manual</h2>
+            <HelpIcon text="Un asiento contable registra una transacción con mínimo dos movimientos: uno en Débito y otro en Crédito. Los totales deben cuadrar." />
+          </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
         </div>
         <form onSubmit={submit} className="px-6 py-4 space-y-4">
@@ -130,7 +139,9 @@ export default function Asientos() {
         {loading ? (
           <div className="card text-center text-gray-400 py-8">Cargando…</div>
         ) : asientos.length === 0 ? (
-          <div className="card text-center text-gray-400 py-8">Sin asientos</div>
+          <div className="card">
+            <EmptyState icon="📒" title="Sin asientos contables" description="Los asientos se generan automáticamente al emitir facturas, o puede crearlos manualmente." action={() => setModal(true)} actionLabel="+ Asiento Manual" />
+          </div>
         ) : asientos.map((a) => (
           <div key={a.id} className="card p-0 overflow-hidden">
             <button

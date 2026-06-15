@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/client'
 import { descargarExcel } from '../../utils/excel'
+import { useToast } from '../../context/ToastContext'
+import { parseApiError } from '../../utils/errorMessages'
+import EmptyState from '../../components/ui/EmptyState'
+import { HelpIcon } from '../../components/ui/Tooltip'
 
 function ModalDescuento({ cuenta, onClose, onSaved }) {
   const [form, setForm] = useState({ porcentaje: '', dias_plazo: '' })
@@ -59,7 +63,7 @@ function ModalPago({ cuenta, tipo, onClose, onSaved }) {
     try {
       await api.post(`/cartera/${tipo}/${cuenta.id}/registrar-pago/`, form)
       onSaved()
-    } catch (err) { setError(err.response?.data?.error || JSON.stringify(err.response?.data || 'Error')) }
+    } catch (err) { setError(parseApiError(err)) }
     finally { setSaving(false) }
   }
 
@@ -97,6 +101,7 @@ function ModalPago({ cuenta, tipo, onClose, onSaved }) {
 }
 
 export default function PorCobrar() {
+  const toast = useToast()
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [estadoF, setEstadoF] = useState('')
@@ -118,7 +123,7 @@ export default function PorCobrar() {
       {modalDescuento && <ModalDescuento cuenta={modalDescuento} onClose={() => setModalDescuento(null)} onSaved={() => { setModalDescuento(null); load() }} />}
       <div className="flex flex-wrap justify-between items-center gap-2">
         <h1 className="text-2xl font-bold text-slate-800">Cuentas por Cobrar</h1>
-        <button className="btn-excel" onClick={() => descargarExcel('/cartera/exportar/por-cobrar/', 'por_cobrar.xlsx').catch(() => alert('Error al exportar'))}>⬇ Excel</button>
+        <button className="btn-excel" onClick={() => descargarExcel('/cartera/exportar/por-cobrar/', 'por_cobrar.xlsx').then(() => toast.success('Cartera por cobrar exportada.')).catch(() => toast.error('No se pudo exportar.'))}>⬇ Excel</button>
       </div>
       <div className="flex gap-3">
         <select className="input w-40" value={estadoF} onChange={e => setEstadoF(e.target.value)}>
@@ -130,8 +135,17 @@ export default function PorCobrar() {
         <table className="w-full">
           <thead className="bg-gray-50 border-b"><tr><th className="th">Factura</th><th className="th">Cliente</th><th className="th">Vencimiento</th><th className="th text-right">Total</th><th className="th text-right">Pagado</th><th className="th text-right">Pendiente</th><th className="th">Estado</th><th className="th" /></tr></thead>
           <tbody className="divide-y divide-gray-100">
-            {loading ? <tr><td colSpan={8} className="td text-center py-8 text-gray-400">Cargando…</td></tr>
-            : data.length === 0 ? <tr><td colSpan={8} className="td text-center py-8 text-gray-400">Sin registros</td></tr>
+            {loading ? (
+              <tr><td colSpan={8} className="td text-center py-12">
+                <div className="flex items-center justify-center gap-2 text-gray-400">
+                  <div className="animate-spin h-4 w-4 border-b-2 border-blue-600 rounded-full" />Cargando…
+                </div>
+              </td></tr>
+            ) : data.length === 0 ? (
+              <tr><td colSpan={8}>
+                <EmptyState icon="💳" title="Sin cuentas por cobrar" description="Las cuentas por cobrar se crean al emitir facturas de venta." />
+              </td></tr>
+            )
             : data.map(c => (
               <tr key={c.id} className="hover:bg-gray-50">
                 <td className="td font-mono text-xs">{c.factura_numero}</td>

@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api/client'
+import { useToast } from '../../context/ToastContext'
+import { parseApiError } from '../../utils/errorMessages'
+import { HelpIcon } from '../../components/ui/Tooltip'
 
 const hoy = () => new Date().toISOString().slice(0, 10)
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
@@ -17,6 +20,7 @@ function calcLine(l) {
 
 export default function FacturaNueva() {
   const navigate = useNavigate()
+  const toast = useToast()
   const [tipo, setTipo] = useState('FV')
   const [tercero, setTercero] = useState('')
   const [fecha, setFecha] = useState(hoy())
@@ -67,8 +71,8 @@ export default function FacturaNueva() {
 
   const submit = async (e) => {
     e.preventDefault()
-    if (!tercero) { setError('Seleccione un tercero'); return }
-    if (lines.some((l) => !l.producto)) { setError('Todos los ítems deben tener un producto'); return }
+    if (!tercero) { setError('Seleccione un tercero antes de continuar.'); return }
+    if (lines.some((l) => !l.producto)) { setError('Todos los ítems deben tener un producto seleccionado.'); return }
     setSaving(true); setError('')
     try {
       const detalles = lines.map((l) => ({
@@ -79,26 +83,35 @@ export default function FacturaNueva() {
         descuento_porcentaje: l.descuento_porcentaje,
         iva_porcentaje: l.iva_porcentaje,
       }))
-      const { data } = await api.post('/facturacion/facturas/', {
+      await api.post('/facturacion/facturas/', {
         tipo, tercero, fecha, fecha_vencimiento: fechaVenc || null, observaciones: obs, detalles,
       })
+      toast.success(`Factura guardada como borrador. Recuerde emitirla para que tenga validez.`)
       navigate('/facturacion')
     } catch (err) {
-      setError(JSON.stringify(err.response?.data || 'Error al guardar'))
+      setError(parseApiError(err))
     } finally { setSaving(false) }
   }
+
+  const tipoLabel = { FV: 'Factura de Venta', FC: 'Factura de Compra', NC: 'Nota Crédito', ND: 'Nota Débito' }
 
   return (
     <div className="max-w-5xl space-y-5">
       <h1 className="text-2xl font-bold text-slate-800">Nueva Factura</h1>
 
-      {error && <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">{error}</div>}
+      {error && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-red-700 text-sm whitespace-pre-line">{error}</p>
+        </div>
+      )}
 
       <form onSubmit={submit} className="space-y-5">
-        {/* Cabecera */}
         <div className="card grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="label">Tipo *</label>
+            <label className="label flex items-center gap-1">
+              Tipo *
+              <HelpIcon text="FV: Factura de Venta (a clientes). FC: Factura de Compra (de proveedores). NC/ND: Notas contables de ajuste." />
+            </label>
             <select className="input" value={tipo} onChange={(e) => setTipo(e.target.value)}>
               <option value="FV">Factura de Venta</option>
               <option value="FC">Factura de Compra</option>
@@ -107,30 +120,38 @@ export default function FacturaNueva() {
             </select>
           </div>
           <div className="md:col-span-2">
-            <label className="label">Tercero *</label>
+            <label className="label">{tipo === 'FV' || tipo === 'ND' ? 'Cliente' : 'Proveedor'} *</label>
             <select className="input" value={tercero} onChange={(e) => setTercero(e.target.value)} required>
-              <option value="">Seleccionar…</option>
+              <option value="">Seleccionar tercero…</option>
               {terceros.map((t) => <option key={t.id} value={t.id}>{t.nombre} — {t.nit}</option>)}
             </select>
+            {terceros.length === 0 && (
+              <p className="text-xs text-amber-600 mt-0.5">No hay terceros activos. <a href="/terceros" className="underline">Cree uno primero.</a></p>
+            )}
           </div>
           <div>
             <label className="label">Fecha *</label>
             <input className="input" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
           </div>
           <div>
-            <label className="label">Vencimiento</label>
+            <label className="label flex items-center gap-1">
+              Vencimiento
+              <HelpIcon text="Fecha límite de pago. Si no aplica, déjelo vacío." position="right" />
+            </label>
             <input className="input" type="date" value={fechaVenc} onChange={(e) => setFechaVenc(e.target.value)} />
           </div>
           <div className="md:col-span-3">
             <label className="label">Observaciones</label>
-            <input className="input" value={obs} onChange={(e) => setObs(e.target.value)} />
+            <input className="input" value={obs} onChange={(e) => setObs(e.target.value)} placeholder="Notas internas o para el cliente…" />
           </div>
         </div>
 
-        {/* Líneas */}
         <div className="card p-0 overflow-hidden">
           <div className="px-5 py-3 bg-gray-50 border-b flex justify-between items-center">
-            <h2 className="font-semibold text-gray-700 text-sm">Ítems</h2>
+            <h2 className="font-semibold text-gray-700 text-sm">
+              Ítems
+              <HelpIcon text="Agregue los productos o servicios de la factura. El IVA se calcula automáticamente según la tarifa del producto." />
+            </h2>
             <button type="button" onClick={addLine} className="text-blue-600 text-sm hover:underline">+ Agregar ítem</button>
           </div>
           <div className="overflow-x-auto">
@@ -139,7 +160,12 @@ export default function FacturaNueva() {
                 <tr>
                   <th className="th w-48">Producto</th><th className="th">Descripción</th>
                   <th className="th w-20">Cant.</th><th className="th w-28">P. Unitario</th>
-                  <th className="th w-20">Desc %</th><th className="th w-20">IVA %</th>
+                  <th className="th w-20">
+                    <span className="flex items-center gap-1">Desc %<HelpIcon text="Descuento comercial sobre el precio unitario, en porcentaje." /></span>
+                  </th>
+                  <th className="th w-20">
+                    <span className="flex items-center gap-1">IVA %<HelpIcon text="Tarifa de IVA aplicable. Las tarifas comunes en Colombia son 0%, 5% y 19%." /></span>
+                  </th>
                   <th className="th w-28 text-right">Total</th><th className="th w-8" />
                 </tr>
               </thead>
@@ -171,7 +197,6 @@ export default function FacturaNueva() {
           </div>
         </div>
 
-        {/* Totales */}
         <div className="flex justify-end">
           <div className="card w-64 space-y-2 text-sm">
             <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>{fmt(totales.subtotal)}</span></div>
@@ -180,9 +205,17 @@ export default function FacturaNueva() {
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
           <button type="button" onClick={() => navigate('/facturacion')} className="btn-secondary">Cancelar</button>
-          <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Guardando…' : 'Guardar como borrador'}</button>
+          <button type="submit" className="btn-primary" disabled={saving}>
+            {saving ? (
+              <span className="flex items-center gap-2">
+                <span className="animate-spin h-3 w-3 border-b-2 border-white rounded-full" />
+                Guardando…
+              </span>
+            ) : 'Guardar como borrador'}
+          </button>
+          <p className="text-xs text-gray-400">Podrá emitirla desde el listado de facturas.</p>
         </div>
       </form>
     </div>

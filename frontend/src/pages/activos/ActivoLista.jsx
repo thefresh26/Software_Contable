@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../../api/client'
+import { useConfirm } from '../../components/ui/ConfirmDialog'
+import { useToast } from '../../context/ToastContext'
+import { parseApiError } from '../../utils/errorMessages'
+import EmptyState from '../../components/ui/EmptyState'
 
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 
@@ -20,6 +24,8 @@ const estadoLabel = {
 
 export default function ActivoLista() {
   const navigate = useNavigate()
+  const toast = useToast()
+  const confirm = useConfirm()
   const [data, setData] = useState([])
   const [categorias, setCategorias] = useState([])
   const [loading, setLoading] = useState(true)
@@ -86,9 +92,15 @@ export default function ActivoLista() {
           </thead>
           <tbody className="divide-y">
             {loading ? (
-              <tr><td colSpan={9} className="td text-center text-gray-400 py-8">Cargando…</td></tr>
+              <tr><td colSpan={9} className="td text-center py-12">
+                <div className="flex items-center justify-center gap-2 text-gray-400">
+                  <div className="animate-spin h-4 w-4 border-b-2 border-blue-600 rounded-full" />Cargando…
+                </div>
+              </td></tr>
             ) : data.length === 0 ? (
-              <tr><td colSpan={9} className="td text-center text-gray-400 py-8">Sin activos registrados</td></tr>
+              <tr><td colSpan={9}>
+                <EmptyState icon="🏢" title="Sin activos fijos registrados" description="Registre los bienes de su empresa: equipos, vehículos, muebles, etc." action={() => navigate('/activos/nuevo')} actionLabel="+ Nuevo Activo" />
+              </td></tr>
             ) : data.map(a => (
               <tr key={a.id} className="hover:bg-gray-50">
                 <td className="td font-mono text-xs">{a.codigo}</td>

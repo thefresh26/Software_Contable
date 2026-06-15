@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import Sidebar from './Sidebar'
 import NotificationBell from './NotificationBell'
 import BusquedaGlobal from './BusquedaGlobal'
+import Breadcrumbs from './Breadcrumbs'
 
 export default function Layout() {
   const { isAuthenticated, loading } = useAuth()
@@ -44,6 +45,7 @@ export default function Layout() {
           <NotificationBell />
         </header>
         <main className="flex-1 p-4 md:p-6 overflow-y-auto">
+          <Breadcrumbs />
           <Outlet />
         </main>
       </div>

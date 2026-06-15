@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import api from '../api/client'
 import { descargarExcel } from '../utils/excel'
+import { useToast } from '../context/ToastContext'
+import { parseApiError, successMessage } from '../utils/errorMessages'
+import EmptyState from '../components/ui/EmptyState'
+import { HelpIcon } from '../components/ui/Tooltip'
 
 const EMPTY_PROD = { codigo: '', nombre: '', descripcion: '', categoria: '', precio_compra: '', precio_venta: '', iva_porcentaje: 19, stock_actual: 0, stock_minimo: 5, unidad_medida: 'UND', activo: true }
 
@@ -8,6 +12,7 @@ function ModalProducto({ item, categorias, onClose, onSaved }) {
   const [form, setForm] = useState(item ? { ...item, categoria: item.categoria || '' } : EMPTY_PROD)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const toast = useToast()
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
 
   const submit = async (e) => {
@@ -15,8 +20,9 @@ function ModalProducto({ item, categorias, onClose, onSaved }) {
     const body = { ...form, categoria: form.categoria || null }
     try {
       item?.id ? await api.put(`/inventario/productos/${item.id}/`, body) : await api.post('/inventario/productos/', body)
+      toast.success(successMessage(item?.id ? 'editar' : 'crear', 'Producto', form.nombre))
       onSaved()
-    } catch (err) { setError(JSON.stringify(err.response?.data || 'Error')) }
+    } catch (err) { setError(parseApiError(err)) }
     finally { setSaving(false) }
   }
 
@@ -28,9 +34,12 @@ function ModalProducto({ item, categorias, onClose, onSaved }) {
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
         </div>
         <form onSubmit={submit} className="px-6 py-4 space-y-3">
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-md"><p className="text-red-700 text-sm whitespace-pre-line">{error}</p></div>}
           <div className="grid grid-cols-2 gap-3">
-            <div><label className="label">Código *</label><input className="input" value={form.codigo} onChange={(e) => set('codigo', e.target.value)} required /></div>
+            <div>
+              <label className="label flex items-center gap-1">Código *<HelpIcon text="Código único del producto (ej: PROD-001). Se usa en facturas y reportes." /></label>
+              <input className="input" value={form.codigo} onChange={(e) => set('codigo', e.target.value)} required placeholder="Ej: PROD-001" />
+            </div>
             <div>
               <label className="label">Categoría</label>
               <select className="input" value={form.categoria} onChange={(e) => set('categoria', e.target.value)}>
@@ -42,18 +51,26 @@ function ModalProducto({ item, categorias, onClose, onSaved }) {
           <div><label className="label">Nombre *</label><input className="input" value={form.nombre} onChange={(e) => set('nombre', e.target.value)} required /></div>
           <div><label className="label">Descripción</label><textarea className="input" rows={2} value={form.descripcion} onChange={(e) => set('descripcion', e.target.value)} /></div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div><label className="label">Precio compra</label><input className="input" type="number" step="0.01" value={form.precio_compra} onChange={(e) => set('precio_compra', e.target.value)} /></div>
-            <div><label className="label">Precio venta</label><input className="input" type="number" step="0.01" value={form.precio_venta} onChange={(e) => set('precio_venta', e.target.value)} /></div>
-            <div><label className="label">IVA %</label><input className="input" type="number" step="0.01" value={form.iva_porcentaje} onChange={(e) => set('iva_porcentaje', e.target.value)} /></div>
+            <div><label className="label">Precio compra</label><input className="input" type="number" step="0.01" value={form.precio_compra} onChange={(e) => set('precio_compra', e.target.value)} placeholder="0.00" /></div>
+            <div><label className="label">Precio venta</label><input className="input" type="number" step="0.01" value={form.precio_venta} onChange={(e) => set('precio_venta', e.target.value)} placeholder="0.00" /></div>
+            <div>
+              <label className="label flex items-center gap-1">IVA %<HelpIcon text="Tarifa de IVA por defecto para este producto. Las más comunes en Colombia son 0%, 5% y 19%." /></label>
+              <input className="input" type="number" step="0.01" value={form.iva_porcentaje} onChange={(e) => set('iva_porcentaje', e.target.value)} />
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div><label className="label">Stock actual</label><input className="input" type="number" value={form.stock_actual} onChange={(e) => set('stock_actual', e.target.value)} /></div>
-            <div><label className="label">Stock mínimo</label><input className="input" type="number" value={form.stock_minimo} onChange={(e) => set('stock_minimo', e.target.value)} /></div>
-            <div><label className="label">Unidad</label><input className="input" value={form.unidad_medida} onChange={(e) => set('unidad_medida', e.target.value)} /></div>
+            <div>
+              <label className="label flex items-center gap-1">Stock mínimo<HelpIcon text="Cuando el stock baje de este número, aparecerá una alerta en el Dashboard." /></label>
+              <input className="input" type="number" value={form.stock_minimo} onChange={(e) => set('stock_minimo', e.target.value)} />
+            </div>
+            <div><label className="label">Unidad</label><input className="input" value={form.unidad_medida} onChange={(e) => set('unidad_medida', e.target.value)} placeholder="UND, KG, MT…" /></div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" onClick={onClose} className="btn-secondary">Cancelar</button>
-            <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Guardando…' : 'Guardar'}</button>
+            <button type="submit" className="btn-primary" disabled={saving}>
+              {saving ? <span className="flex items-center gap-2"><span className="animate-spin h-3 w-3 border-b-2 border-white rounded-full" />Guardando…</span> : 'Guardar'}
+            </button>
           </div>
         </form>
       </div>
@@ -70,6 +87,7 @@ export default function Inventario() {
   const [search, setSearch] = useState('')
   const [soloBajo, setSoloBajo] = useState(false)
   const [modal, setModal] = useState(false)
+  const toast = useToast()
 
   const load = () => {
     setLoading(true)
@@ -91,7 +109,7 @@ export default function Inventario() {
       <div className="flex flex-wrap justify-between items-center gap-2">
         <h1 className="text-2xl font-bold text-slate-800">Inventario</h1>
         <div className="flex gap-2">
-          <button className="btn-excel" onClick={() => descargarExcel('/inventario/exportar/productos/', 'productos.xlsx').catch(() => alert('Error al exportar'))}>⬇ Excel</button>
+          <button className="btn-excel" onClick={() => descargarExcel('/inventario/exportar/productos/', 'productos.xlsx').then(() => toast.success('Productos exportados correctamente.')).catch(() => toast.error('No se pudo exportar el inventario.'))}>⬇ Excel</button>
           <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo Producto</button>
         </div>
       </div>
@@ -114,9 +132,21 @@ export default function Inventario() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
-              <tr><td colSpan={7} className="td text-center py-8 text-gray-400">Cargando…</td></tr>
+              <tr><td colSpan={7} className="td text-center py-12">
+                <div className="flex items-center justify-center gap-2 text-gray-400">
+                  <div className="animate-spin h-4 w-4 border-b-2 border-blue-600 rounded-full" />Cargando…
+                </div>
+              </td></tr>
             ) : productos.length === 0 ? (
-              <tr><td colSpan={7} className="td text-center py-8 text-gray-400">Sin productos</td></tr>
+              <tr><td colSpan={7}>
+                <EmptyState
+                  icon="📦"
+                  title={search || soloBajo ? 'Sin productos para los filtros aplicados' : 'Aún no tiene productos registrados'}
+                  description={search || soloBajo ? 'Intente con otros filtros.' : 'Agregue los productos o servicios que vende su empresa.'}
+                  action={!search && !soloBajo ? () => setModal(true) : undefined}
+                  actionLabel="+ Nuevo Producto"
+                />
+              </td></tr>
             ) : productos.map((p) => (
               <tr key={p.id} className="hover:bg-gray-50">
                 <td className="td font-mono text-xs">{p.codigo}</td>

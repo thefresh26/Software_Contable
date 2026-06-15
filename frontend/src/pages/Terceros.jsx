@@ -1,6 +1,11 @@
 import { useEffect, useState, useCallback } from 'react'
 import api from '../api/client'
 import { descargarExcel } from '../utils/excel'
+import { useToast } from '../context/ToastContext'
+import { useConfirm } from '../components/ui/ConfirmDialog'
+import { parseApiError, successMessage } from '../utils/errorMessages'
+import EmptyState from '../components/ui/EmptyState'
+import { HelpIcon } from '../components/ui/Tooltip'
 
 const EMPTY = { tipo: 'cliente', tipo_persona: 'natural', nombre: '', nit: '', email: '', telefono: '', direccion: '', ciudad: '' }
 
@@ -23,7 +28,10 @@ function NitInput({ value, onChange }) {
 
   return (
     <div>
-      <label className="label">NIT / Cédula *</label>
+      <label className="label flex items-center gap-1">
+        NIT / Cédula *
+        <HelpIcon text="Para personas jurídicas: número de NIT con dígito verificador (ej: 900123456-7). Para personas naturales: número de cédula de ciudadanía." />
+      </label>
       <div className="relative">
         <input
           className="input pr-8"
@@ -41,7 +49,7 @@ function NitInput({ value, onChange }) {
       </div>
       {nitInfo && !nitInfo.valido && nitInfo.digito !== null && (
         <p className="text-xs text-amber-600 mt-0.5">
-          Dígito verificador esperado: <strong>{nitInfo.digito}</strong>. Formato: {value.replace(/-.*/, '')}-{nitInfo.digito}
+          Dígito verificador esperado: <strong>{nitInfo.digito}</strong>. Use: {value.replace(/-.*/, '')}-{nitInfo.digito}
         </p>
       )}
     </div>
@@ -52,6 +60,7 @@ function Modal({ item, onClose, onSaved }) {
   const [form, setForm] = useState(item || EMPTY)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const toast = useToast()
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
 
@@ -59,11 +68,10 @@ function Modal({ item, onClose, onSaved }) {
     e.preventDefault(); setSaving(true); setError('')
     try {
       item?.id ? await api.put(`/terceros/${item.id}/`, form) : await api.post('/terceros/', form)
+      toast.success(successMessage(item?.id ? 'editar' : 'crear', 'Tercero', form.nombre))
       onSaved()
     } catch (err) {
-      const data = err.response?.data
-      const msg = typeof data === 'object' ? JSON.stringify(data) : String(data || 'Error al guardar')
-      setError(msg)
+      setError(parseApiError(err))
     } finally { setSaving(false) }
   }
 
@@ -75,10 +83,17 @@ function Modal({ item, onClose, onSaved }) {
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
         </div>
         <form onSubmit={submit} className="px-6 py-4 space-y-3">
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-red-700 text-sm whitespace-pre-line">{error}</p>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label">Tipo</label>
+              <label className="label flex items-center gap-1">
+                Tipo
+                <HelpIcon text="Cliente: vende a él. Proveedor: le compra a él. Ambos: es cliente y proveedor al mismo tiempo." />
+              </label>
               <select className="input" value={form.tipo} onChange={(e) => set('tipo', e.target.value)}>
                 <option value="cliente">Cliente</option>
                 <option value="proveedor">Proveedor</option>
@@ -86,7 +101,10 @@ function Modal({ item, onClose, onSaved }) {
               </select>
             </div>
             <div>
-              <label className="label">Persona</label>
+              <label className="label flex items-center gap-1">
+                Persona
+                <HelpIcon text="Natural: persona física (cédula). Jurídica: empresa o sociedad (NIT con dígito verificador)." />
+              </label>
               <select className="input" value={form.tipo_persona} onChange={(e) => set('tipo_persona', e.target.value)}>
                 <option value="natural">Natural</option>
                 <option value="juridica">Jurídica</option>
@@ -95,32 +113,36 @@ function Modal({ item, onClose, onSaved }) {
           </div>
           <div>
             <label className="label">Nombre / Razón social *</label>
-            <input className="input" value={form.nombre} onChange={(e) => set('nombre', e.target.value)} required />
+            <input className="input" value={form.nombre} onChange={(e) => set('nombre', e.target.value)} required placeholder="Ej: Comerciales López S.A.S." />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <NitInput value={form.nit} onChange={(v) => set('nit', v)} />
             <div>
               <label className="label">Teléfono</label>
-              <input className="input" value={form.telefono} onChange={(e) => set('telefono', e.target.value)} />
+              <input className="input" value={form.telefono} onChange={(e) => set('telefono', e.target.value)} placeholder="Ej: 3001234567" />
             </div>
           </div>
           <div>
             <label className="label">Email</label>
-            <input className="input" type="email" value={form.email} onChange={(e) => set('email', e.target.value)} />
+            <input className="input" type="email" value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="correo@empresa.com" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="label">Ciudad</label>
-              <input className="input" value={form.ciudad} onChange={(e) => set('ciudad', e.target.value)} />
+              <input className="input" value={form.ciudad} onChange={(e) => set('ciudad', e.target.value)} placeholder="Ej: Bogotá" />
             </div>
             <div>
               <label className="label">Dirección</label>
-              <input className="input" value={form.direccion} onChange={(e) => set('direccion', e.target.value)} />
+              <input className="input" value={form.direccion} onChange={(e) => set('direccion', e.target.value)} placeholder="Calle 12 # 34-56" />
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" onClick={onClose} className="btn-secondary">Cancelar</button>
-            <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Guardando…' : 'Guardar'}</button>
+            <button type="submit" className="btn-primary" disabled={saving}>
+              {saving ? (
+                <span className="flex items-center gap-2"><span className="animate-spin h-3 w-3 border-b-2 border-white rounded-full inline-block" />Guardando…</span>
+              ) : 'Guardar'}
+            </button>
           </div>
         </form>
       </div>
@@ -136,6 +158,8 @@ export default function Terceros() {
   const [search, setSearch] = useState('')
   const [tipo, setTipo] = useState('')
   const [modal, setModal] = useState(null)
+  const toast = useToast()
+  const confirm = useConfirm()
 
   const load = () => {
     setLoading(true)
@@ -147,10 +171,30 @@ export default function Terceros() {
 
   useEffect(() => { load() }, [search, tipo])
 
-  const deactivate = async (id) => {
-    if (!confirm('¿Desactivar este tercero?')) return
-    await api.patch(`/terceros/${id}/`, { activo: false })
-    load()
+  const deactivate = async (tercero) => {
+    const ok = await confirm({
+      title: 'Desactivar tercero',
+      message: `¿Está seguro que desea desactivar a "${tercero.nombre}"? No podrá usarlo en nuevas facturas mientras esté inactivo.`,
+      confirmLabel: 'Desactivar',
+      danger: true,
+    })
+    if (!ok) return
+    try {
+      await api.patch(`/terceros/${tercero.id}/`, { activo: false })
+      toast.success(`Tercero "${tercero.nombre}" desactivado correctamente.`)
+      load()
+    } catch (err) {
+      toast.error(parseApiError(err))
+    }
+  }
+
+  const exportar = async () => {
+    try {
+      await descargarExcel('/terceros/exportar/', 'terceros.xlsx')
+      toast.success(successMessage('exportar', 'Terceros'))
+    } catch {
+      toast.error('No se pudo exportar. Intente de nuevo.')
+    }
   }
 
   return (
@@ -162,7 +206,7 @@ export default function Terceros() {
       <div className="flex flex-wrap justify-between items-center gap-2">
         <h1 className="text-2xl font-bold text-slate-800">Terceros</h1>
         <div className="flex gap-2">
-          <button className="btn-excel" onClick={() => descargarExcel('/terceros/exportar/', 'terceros.xlsx').catch(() => alert('Error al exportar'))}>⬇ Excel</button>
+          <button className="btn-excel" onClick={exportar}>⬇ Excel</button>
           <button className="btn-primary" onClick={() => setModal(true)}>+ Nuevo</button>
         </div>
       </div>
@@ -187,9 +231,22 @@ export default function Terceros() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
-              <tr><td colSpan={7} className="td text-center py-8 text-gray-400">Cargando…</td></tr>
+              <tr><td colSpan={7} className="td text-center py-12">
+                <div className="flex items-center justify-center gap-2 text-gray-400">
+                  <div className="animate-spin h-4 w-4 border-b-2 border-blue-600 rounded-full" />
+                  Cargando terceros…
+                </div>
+              </td></tr>
             ) : data.length === 0 ? (
-              <tr><td colSpan={7} className="td text-center py-8 text-gray-400">Sin resultados</td></tr>
+              <tr><td colSpan={7}>
+                <EmptyState
+                  icon="👥"
+                  title={search || tipo ? 'Sin resultados para la búsqueda' : 'Aún no tiene terceros registrados'}
+                  description={search || tipo ? 'Intente con otros filtros.' : 'Cree clientes y proveedores para poder facturar.'}
+                  action={!search && !tipo ? () => setModal(true) : undefined}
+                  actionLabel="+ Nuevo Tercero"
+                />
+              </td></tr>
             ) : data.map((t) => (
               <tr key={t.id} className="hover:bg-gray-50">
                 <td className="td font-medium">{t.nombre}</td>
@@ -205,7 +262,7 @@ export default function Terceros() {
                 <td className="td">
                   <div className="flex gap-2">
                     <button className="text-blue-600 hover:underline text-xs" onClick={() => setModal(t)}>Editar</button>
-                    {t.activo && <button className="text-red-500 hover:underline text-xs" onClick={() => deactivate(t.id)}>Desactivar</button>}
+                    {t.activo && <button className="text-red-500 hover:underline text-xs" onClick={() => deactivate(t)}>Desactivar</button>}
                   </div>
                 </td>
               </tr>

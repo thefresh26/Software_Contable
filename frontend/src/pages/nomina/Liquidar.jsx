@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api/client'
+import { useToast } from '../../context/ToastContext'
+import { parseApiError } from '../../utils/errorMessages'
+import { HelpIcon } from '../../components/ui/Tooltip'
 
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 
@@ -32,6 +35,7 @@ function Fila({ label, valor, tipo = 'normal' }) {
 
 export default function Liquidar() {
   const navigate = useNavigate()
+  const toast = useToast()
   const [form, setForm] = useState(EMPTY)
   const [empleados, setEmpleados] = useState([])
   const [resultado, setResultado] = useState(null)
@@ -49,7 +53,7 @@ export default function Liquidar() {
     try {
       const { data } = await api.post('/nomina/liquidar/', form)
       setResultado(data)
-    } catch (err) { setError(JSON.stringify(err.response?.data || 'Error al liquidar')) }
+    } catch (err) { setError(parseApiError(err)) }
     finally { setSaving(false) }
   }
 
@@ -63,7 +67,7 @@ export default function Liquidar() {
         {/* Formulario */}
         <form onSubmit={calcular} className="card space-y-4">
           <h2 className="font-semibold text-gray-700">Datos del período</h2>
-          {error && <p className="text-red-600 text-sm bg-red-50 p-2 rounded">{error}</p>}
+          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-md"><p className="text-red-700 text-sm whitespace-pre-line">{error}</p></div>}
 
           <div>
             <label className="label">Empleado *</label>
@@ -80,15 +84,26 @@ export default function Liquidar() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div><label className="label">Bonificaciones</label><input className="input" type="number" min="0" step="1" value={form.bonificaciones} onChange={(e) => set('bonificaciones', e.target.value)} /></div>
-            <div><label className="label">H.E. Diurnas</label><input className="input" type="number" min="0" step="0.5" value={form.horas_extra_diurnas} onChange={(e) => set('horas_extra_diurnas', e.target.value)} /></div>
-            <div><label className="label">H.E. Nocturnas</label><input className="input" type="number" min="0" step="0.5" value={form.horas_extra_nocturnas} onChange={(e) => set('horas_extra_nocturnas', e.target.value)} /></div>
-            <div><label className="label">Retención en fuente</label><input className="input" type="number" min="0" step="1" value={form.retencion_fuente} onChange={(e) => set('retencion_fuente', e.target.value)} /></div>
-            <div><label className="label">Otras deducciones</label><input className="input" type="number" min="0" step="1" value={form.otras_deducciones} onChange={(e) => set('otras_deducciones', e.target.value)} /></div>
+            <div><label className="label">Bonificaciones</label><input className="input" type="number" min="0" step="1" value={form.bonificaciones} onChange={(e) => set('bonificaciones', e.target.value)} placeholder="0" /></div>
+            <div>
+              <label className="label flex items-center gap-1">H.E. Diurnas<HelpIcon text="Horas extra trabajadas entre 6am y 10pm. Se pagan con recargo del 25% sobre el valor hora ordinaria." /></label>
+              <input className="input" type="number" min="0" step="0.5" value={form.horas_extra_diurnas} onChange={(e) => set('horas_extra_diurnas', e.target.value)} placeholder="0" />
+            </div>
+            <div>
+              <label className="label flex items-center gap-1">H.E. Nocturnas<HelpIcon text="Horas extra trabajadas entre 10pm y 6am. Se pagan con recargo del 75% sobre el valor hora ordinaria." /></label>
+              <input className="input" type="number" min="0" step="0.5" value={form.horas_extra_nocturnas} onChange={(e) => set('horas_extra_nocturnas', e.target.value)} placeholder="0" />
+            </div>
+            <div>
+              <label className="label flex items-center gap-1">Retención en fuente<HelpIcon text="Impuesto retenido al empleado según tabla de retención de la DIAN. Aplica si el ingreso supera el tope." /></label>
+              <input className="input" type="number" min="0" step="1" value={form.retencion_fuente} onChange={(e) => set('retencion_fuente', e.target.value)} placeholder="0" />
+            </div>
+            <div><label className="label">Otras deducciones</label><input className="input" type="number" min="0" step="1" value={form.otras_deducciones} onChange={(e) => set('otras_deducciones', e.target.value)} placeholder="0" /></div>
           </div>
 
           <div className="flex gap-3">
-            <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Calculando…' : 'Calcular y Guardar'}</button>
+            <button type="submit" className="btn-primary" disabled={saving}>
+              {saving ? <span className="flex items-center gap-2"><span className="animate-spin h-3 w-3 border-b-2 border-white rounded-full" />Calculando…</span> : 'Calcular y Guardar'}
+            </button>
             <button type="button" className="btn-secondary" onClick={() => navigate('/nomina/historial')}>Ver historial</button>
           </div>
         </form>

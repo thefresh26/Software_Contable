@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/client'
+import { useToast } from '../../context/ToastContext'
+import { parseApiError, successMessage } from '../../utils/errorMessages'
+import EmptyState from '../../components/ui/EmptyState'
+import { HelpIcon } from '../../components/ui/Tooltip'
 
 const EMPTY = { nombre: '', cedula: '', cargo: '', departamento: '', salario_base: '', fecha_ingreso: '', tipo_contrato: 'indefinido', activo: true, cuenta_bancaria: '', banco: '' }
 
@@ -7,14 +11,16 @@ function Modal({ item, onClose, onSaved }) {
   const [form, setForm] = useState(item || EMPTY)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const toast = useToast()
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
 
   const submit = async (e) => {
     e.preventDefault(); setSaving(true); setError('')
     try {
       item?.id ? await api.put(`/nomina/empleados/${item.id}/`, form) : await api.post('/nomina/empleados/', form)
+      toast.success(successMessage(item?.id ? 'editar' : 'crear', 'Empleado', form.nombre))
       onSaved()
-    } catch (err) { setError(JSON.stringify(err.response?.data || 'Error')) }
+    } catch (err) { setError(parseApiError(err)) }
     finally { setSaving(false) }
   }
 
@@ -28,10 +34,10 @@ function Modal({ item, onClose, onSaved }) {
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
         </div>
         <form onSubmit={submit} className="px-6 py-4 space-y-3">
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-          <div><label className="label">Nombre completo *</label><input className="input" value={form.nombre} onChange={(e) => set('nombre', e.target.value)} required /></div>
+          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-md"><p className="text-red-700 text-sm whitespace-pre-line">{error}</p></div>}
+          <div><label className="label">Nombre completo *</label><input className="input" value={form.nombre} onChange={(e) => set('nombre', e.target.value)} required placeholder="Ej: Juan Carlos López" /></div>
           <div className="grid grid-cols-2 gap-3">
-            <div><label className="label">Cédula *</label><input className="input" value={form.cedula} onChange={(e) => set('cedula', e.target.value)} required /></div>
+            <div><label className="label">Cédula *</label><input className="input" value={form.cedula} onChange={(e) => set('cedula', e.target.value)} required placeholder="Número de cédula" /></div>
             <div><label className="label">Fecha de ingreso *</label><input className="input" type="date" value={form.fecha_ingreso} onChange={(e) => set('fecha_ingreso', e.target.value)} required /></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -39,7 +45,10 @@ function Modal({ item, onClose, onSaved }) {
             <div><label className="label">Departamento</label><input className="input" value={form.departamento} onChange={(e) => set('departamento', e.target.value)} /></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div><label className="label">Salario base *</label><input className="input" type="number" min="0" step="1" value={form.salario_base} onChange={(e) => set('salario_base', e.target.value)} required /></div>
+            <div>
+              <label className="label flex items-center gap-1">Salario base *<HelpIcon text="Salario mensual acordado. Para 2026, el salario mínimo en Colombia es $1.423.500." /></label>
+              <input className="input" type="number" min="0" step="1" value={form.salario_base} onChange={(e) => set('salario_base', e.target.value)} required placeholder="1423500" />
+            </div>
             <div>
               <label className="label">Tipo de contrato</label>
               <select className="input" value={form.tipo_contrato} onChange={(e) => set('tipo_contrato', e.target.value)}>
@@ -70,6 +79,7 @@ export default function Empleados() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState(false)
+  const toast = useToast()
 
   const load = () => {
     setLoading(true)
@@ -97,9 +107,15 @@ export default function Empleados() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
-              <tr><td colSpan={8} className="td text-center py-8 text-gray-400">Cargando…</td></tr>
+              <tr><td colSpan={8} className="td text-center py-12">
+                <div className="flex items-center justify-center gap-2 text-gray-400">
+                  <div className="animate-spin h-4 w-4 border-b-2 border-blue-600 rounded-full" />Cargando…
+                </div>
+              </td></tr>
             ) : data.length === 0 ? (
-              <tr><td colSpan={8} className="td text-center py-8 text-gray-400">Sin empleados</td></tr>
+              <tr><td colSpan={8}>
+                <EmptyState icon="👔" title={search ? 'Sin empleados para la búsqueda' : 'Aún no tiene empleados registrados'} description="Registre sus empleados para poder liquidar la nómina." action={!search ? () => setModal(true) : undefined} actionLabel="+ Nuevo Empleado" />
+              </td></tr>
             ) : data.map((e) => (
               <tr key={e.id} className="hover:bg-gray-50">
                 <td className="td font-medium">{e.nombre}</td>

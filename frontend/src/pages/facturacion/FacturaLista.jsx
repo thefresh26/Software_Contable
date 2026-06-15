@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/client'
 import { descargarExcel } from '../../utils/excel'
+import { useToast } from '../../context/ToastContext'
+import { useConfirm } from '../../components/ui/ConfirmDialog'
+import { parseApiError, successMessage } from '../../utils/errorMessages'
+import EmptyState from '../../components/ui/EmptyState'
 
 const fmt = (n) => Number(n || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
 
@@ -19,6 +23,8 @@ export default function FacturaLista() {
   const [filters, setFilters] = useState({ tipo: '', estado: '', fecha_desde: '', fecha_hasta: '' })
   const [accion, setAccion] = useState(null)
   const [exportando, setExportando] = useState(false)
+  const toast = useToast()
+  const confirm = useConfirm()
 
   const load = () => {
     setLoading(true)
@@ -29,44 +35,65 @@ export default function FacturaLista() {
 
   useEffect(() => { load() }, [filters])
 
-  const emitir = async (id) => {
-    if (!confirm('¿Emitir esta factura?')) return
-    setAccion(id)
-    try { await api.post(`/facturacion/facturas/${id}/emitir/`); load() }
-    catch (e) { alert(e.response?.data?.error || 'Error al emitir') }
-    finally { setAccion(null) }
+  const emitir = async (f) => {
+    const ok = await confirm({
+      title: 'Emitir factura',
+      message: `¿Emitir la factura ${f.numero || '(borrador)'}? Una vez emitida no podrá modificarse.`,
+      confirmLabel: 'Emitir',
+    })
+    if (!ok) return
+    setAccion(f.id)
+    try {
+      await api.post(`/facturacion/facturas/${f.id}/emitir/`)
+      toast.success(`Factura ${f.numero || ''} emitida correctamente.`)
+      load()
+    } catch (e) {
+      toast.error(parseApiError(e) || 'Error al emitir la factura.')
+    } finally { setAccion(null) }
   }
 
-  const anular = async (id) => {
-    if (!confirm('¿Anular esta factura? Esta acción revertirá el stock.')) return
-    setAccion(id)
-    try { await api.post(`/facturacion/facturas/${id}/anular/`); load() }
-    catch (e) { alert(e.response?.data?.error || 'Error al anular') }
-    finally { setAccion(null) }
+  const anular = async (f) => {
+    const ok = await confirm({
+      title: 'Anular factura',
+      message: `¿Anular la factura ${f.numero}? Esta acción revertirá el movimiento de inventario y no se puede deshacer.`,
+      confirmLabel: 'Anular Factura',
+      danger: true,
+    })
+    if (!ok) return
+    setAccion(f.id)
+    try {
+      await api.post(`/facturacion/facturas/${f.id}/anular/`)
+      toast.success(successMessage('anular', 'Factura', f.numero))
+      load()
+    } catch (e) {
+      toast.error(parseApiError(e) || 'Error al anular la factura.')
+    } finally { setAccion(null) }
+  }
+
+  const exportar = async () => {
+    setExportando(true)
+    const p = new URLSearchParams()
+    Object.entries(filters).forEach(([k, v]) => { if (v) p.set(k, v) })
+    try {
+      await descargarExcel(`/facturacion/facturas/exportar/?${p}`, 'facturas.xlsx')
+      toast.success(successMessage('exportar', 'Facturas'))
+    } catch {
+      toast.error('No se pudo exportar el listado de facturas.')
+    } finally { setExportando(false) }
   }
 
   const setF = (k, v) => setFilters((f) => ({ ...f, [k]: v }))
+  const hayFiltros = Object.values(filters).some(Boolean)
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap justify-between items-center gap-2">
         <h1 className="text-2xl font-bold text-slate-800">Facturas</h1>
-        <div className="flex gap-2">
-          <button
-            className="btn-excel"
-            disabled={exportando}
-            onClick={async () => {
-              setExportando(true)
-              const p = new URLSearchParams()
-              Object.entries(filters).forEach(([k, v]) => { if (v) p.set(k, v) })
-              try { await descargarExcel(`/facturacion/facturas/exportar/?${p}`, 'facturas.xlsx') }
-              catch { alert('Error al exportar') }
-              finally { setExportando(false) }
-            }}
-          >
-            {exportando ? '…' : '⬇ Excel'}
+        <div className="flex gap-2 flex-wrap">
+          <button className="btn-excel" disabled={exportando} onClick={exportar}>
+            {exportando ? <span className="flex items-center gap-1"><span className="animate-spin h-3 w-3 border-b-2 border-current rounded-full" />Exportando…</span> : '⬇ Excel'}
           </button>
-            <Link to="/facturacion/nota-credito/nueva" className="btn-secondary text-sm">+ NC</Link>
+          <Link to="/facturacion/nota-credito/nueva" className="btn-secondary text-sm">+ NC</Link>
           <Link to="/facturacion/nota-debito/nueva" className="btn-secondary text-sm">+ ND</Link>
           <Link to="/facturacion/nueva" className="btn-primary">+ Nueva Factura</Link>
         </div>
@@ -88,7 +115,11 @@ export default function FacturaLista() {
         </select>
         <input type="date" className="input w-40" value={filters.fecha_desde} onChange={(e) => setF('fecha_desde', e.target.value)} />
         <input type="date" className="input w-40" value={filters.fecha_hasta} onChange={(e) => setF('fecha_hasta', e.target.value)} />
-        <button className="btn-secondary" onClick={() => setFilters({ tipo: '', estado: '', fecha_desde: '', fecha_hasta: '' })}>Limpiar</button>
+        {hayFiltros && (
+          <button className="btn-secondary" onClick={() => setFilters({ tipo: '', estado: '', fecha_desde: '', fecha_hasta: '' })}>
+            Limpiar filtros
+          </button>
+        )}
       </div>
 
       <div className="card p-0 overflow-x-auto">
@@ -101,12 +132,25 @@ export default function FacturaLista() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
-              <tr><td colSpan={8} className="td text-center py-8 text-gray-400">Cargando…</td></tr>
+              <tr><td colSpan={8} className="td text-center py-12">
+                <div className="flex items-center justify-center gap-2 text-gray-400">
+                  <div className="animate-spin h-4 w-4 border-b-2 border-blue-600 rounded-full" />
+                  Cargando facturas…
+                </div>
+              </td></tr>
             ) : data.length === 0 ? (
-              <tr><td colSpan={8} className="td text-center py-8 text-gray-400">Sin facturas</td></tr>
+              <tr><td colSpan={8}>
+                <EmptyState
+                  icon="🧾"
+                  title={hayFiltros ? 'Sin facturas para los filtros aplicados' : 'Aún no tiene facturas registradas'}
+                  description={hayFiltros ? 'Pruebe con otros filtros o limpie la búsqueda.' : 'Cree su primera factura de venta o compra.'}
+                  action={!hayFiltros ? undefined : undefined}
+                  actionLabel="+ Nueva Factura"
+                />
+              </td></tr>
             ) : data.map((f) => (
               <tr key={f.id} className="hover:bg-gray-50">
-                <td className="td font-mono text-xs font-semibold">{f.numero}</td>
+                <td className="td font-mono text-xs font-semibold">{f.numero || '—'}</td>
                 <td className="td"><span className={tipoBadgeCls[f.tipo] || 'badge-gray'}>{tipoLabel[f.tipo]}</span></td>
                 <td className="td">{f.tercero_nombre}</td>
                 <td className="td">{f.fecha}</td>
@@ -120,14 +164,24 @@ export default function FacturaLista() {
                 <td className="td">
                   <div className="flex gap-2 items-center">
                     {f.estado === 'borrador' && (
-                      <button className="btn-success text-xs px-2 py-1" disabled={accion === f.id} onClick={() => emitir(f.id)}>
-                        Emitir
+                      <button
+                        className="btn-success text-xs px-2 py-1"
+                        disabled={accion === f.id}
+                        onClick={() => emitir(f)}
+                      >
+                        {accion === f.id ? <span className="animate-spin h-3 w-3 border-b-2 border-white rounded-full inline-block" /> : 'Emitir'}
                       </button>
                     )}
                     {f.estado === 'emitida' && (
                       <>
                         <a href={`/api/facturacion/facturas/${f.id}/pdf/`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline text-xs">PDF</a>
-                        <button className="text-red-500 hover:underline text-xs" disabled={accion === f.id} onClick={() => anular(f.id)}>Anular</button>
+                        <button
+                          className="text-red-500 hover:underline text-xs"
+                          disabled={accion === f.id}
+                          onClick={() => anular(f)}
+                        >
+                          Anular
+                        </button>
                       </>
                     )}
                   </div>
@@ -136,6 +190,12 @@ export default function FacturaLista() {
             ))}
           </tbody>
         </table>
+        {data.length > 0 && (
+          <div className="px-4 py-2 border-t bg-gray-50 text-xs text-gray-400">
+            {data.length} registro{data.length !== 1 ? 's' : ''}
+            {hayFiltros ? ' (filtrado)' : ''}
+          </div>
+        )}
       </div>
     </div>
   )

@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/client'
+import { useToast } from '../../context/ToastContext'
+import { parseApiError, successMessage } from '../../utils/errorMessages'
+import EmptyState from '../../components/ui/EmptyState'
+import { HelpIcon } from '../../components/ui/Tooltip'
 
 const TIPOS = ['activo', 'pasivo', 'patrimonio', 'ingreso', 'gasto', 'costo']
 const EMPTY = { codigo: '', nombre: '', tipo: 'activo', padre: '', nivel: 4, activa: true, permite_movimiento: true }
@@ -8,6 +12,7 @@ function Modal({ item, cuentas, onClose, onSaved }) {
   const [form, setForm] = useState(item ? { ...item, padre: item.padre || '' } : EMPTY)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const toast = useToast()
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
 
   const submit = async (e) => {
@@ -15,8 +20,9 @@ function Modal({ item, cuentas, onClose, onSaved }) {
     const body = { ...form, padre: form.padre || null }
     try {
       item?.id ? await api.put(`/contabilidad/cuentas/${item.id}/`, body) : await api.post('/contabilidad/cuentas/', body)
+      toast.success(successMessage(item?.id ? 'editar' : 'crear', 'Cuenta PUC', form.codigo))
       onSaved()
-    } catch (err) { setError(JSON.stringify(err.response?.data || 'Error')) }
+    } catch (err) { setError(parseApiError(err)) }
     finally { setSaving(false) }
   }
 
@@ -28,9 +34,15 @@ function Modal({ item, cuentas, onClose, onSaved }) {
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
         </div>
         <form onSubmit={submit} className="px-6 py-4 space-y-3">
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-md"><p className="text-red-700 text-sm whitespace-pre-line">{error}</p></div>}
           <div className="grid grid-cols-2 gap-3">
-            <div><label className="label">Código *</label><input className="input font-mono" value={form.codigo} onChange={(e) => set('codigo', e.target.value)} required /></div>
+            <div>
+              <label className="label flex items-center gap-1">
+                Código *
+                <HelpIcon text="Código del PUC colombiano. Ej: 1105 = Caja, 1110 = Bancos, 4135 = Ventas. El nivel indica cuántos dígitos tiene: Nivel 1 (1 dígito), Nivel 2 (2), Nivel 3 (4), Nivel 4 (6+)." />
+              </label>
+              <input className="input font-mono" value={form.codigo} onChange={(e) => set('codigo', e.target.value)} required placeholder="Ej: 1105" />
+            </div>
             <div>
               <label className="label">Nivel *</label>
               <select className="input" value={form.nivel} onChange={(e) => set('nivel', Number(e.target.value))}>
@@ -114,7 +126,9 @@ export default function PUC() {
             {loading ? (
               <tr><td colSpan={6} className="td text-center py-8 text-gray-400">Cargando…</td></tr>
             ) : cuentas.length === 0 ? (
-              <tr><td colSpan={6} className="td text-center py-8 text-gray-400">Sin cuentas</td></tr>
+              <tr><td colSpan={6}>
+                <EmptyState icon="📒" title="Sin cuentas en el PUC" description="El Plan Único de Cuentas (PUC) define la estructura contable de su empresa." action={() => setModal(true)} actionLabel="+ Nueva Cuenta" />
+              </td></tr>
             ) : cuentas.map((c) => (
               <tr key={c.id} className={`hover:bg-gray-50 ${c.nivel <= 2 ? 'font-semibold' : ''}`}>
                 <td className="td font-mono" style={{ paddingLeft: `${(c.nivel - 1) * 20 + 16}px` }}>{c.codigo}</td>
