@@ -1,3 +1,4 @@
+import io
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment
 from django.http import HttpResponse
@@ -11,9 +12,13 @@ CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.shee
 
 
 def excel_response(wb, filename):
-    response = HttpResponse(content_type=CONTENT_TYPE)
+    # HttpResponse doesn't support tell()/seek() which zipfile requires;
+    # write to BytesIO first then pass raw bytes to HttpResponse.
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    response = HttpResponse(buffer.read(), content_type=CONTENT_TYPE)
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    wb.save(response)
     return response
 
 
@@ -45,5 +50,15 @@ def nuevo_libro(titulo_hoja, empresa_nombre, subtitulo, cabeceras):
 
 def ajustar_columnas(ws):
     for col in ws.columns:
-        ancho = max((len(str(c.value or '')) for c in col), default=10)
-        ws.column_dimensions[col[0].column_letter].width = min(ancho + 4, 55)
+        try:
+            widths = []
+            for c in col:
+                try:
+                    widths.append(len(str(c.value)) if c.value is not None else 0)
+                except AttributeError:
+                    pass
+            ancho = max(widths, default=10)
+            first = col[0]
+            ws.column_dimensions[first.column_letter].width = min(ancho + 4, 55)
+        except (IndexError, AttributeError, TypeError):
+            pass

@@ -8,6 +8,6 @@ router.register(r'categorias', CategoriaActivoViewSet, basename='categoria-activ
 router.register(r'', ActivoFijoViewSet, basename='activo-fijo')
 
 urlpatterns = [
-    path('', include(router.urls)),
     path('exportar/', ExportarActivosView.as_view(), name='exportar-activos'),
+    path('', include(router.urls)),
 ]
