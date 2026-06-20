@@ -20,7 +20,7 @@ class ExportarActivosView(APIView):
             ws.append([
                 a.codigo, a.nombre, a.categoria.nombre,
                 str(a.fecha_compra), float(a.valor_compra), float(a.valor_residual),
-                float(a.depreciacion_acumulada), float(a.valor_neto),
+                float(a.valor_depreciado_acumulado), float(a.valor_en_libros),
                 estados.get(a.estado, a.estado),
             ])
         ajustar_columnas(ws)

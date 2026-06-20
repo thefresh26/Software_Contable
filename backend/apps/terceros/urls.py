@@ -7,6 +7,6 @@ router = DefaultRouter()
 router.register(r'', TerceroViewSet, basename='tercero')
 
 urlpatterns = [
-    path('', include(router.urls)),
     path('exportar/', ExportarTercerosView.as_view(), name='exportar-terceros'),
+    path('', include(router.urls)),
 ]
