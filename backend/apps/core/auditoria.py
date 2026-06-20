@@ -3,7 +3,6 @@ from django.dispatch import receiver
 
 
 def _registrar(instance, accion, modelo_nombre, empresa=None, usuario=None):
-    """Registra un HistorialCambio. Se importa dentro de la función para evitar importaciones circulares."""
     try:
         from apps.core.models import HistorialCambio
         try:
@@ -32,7 +31,7 @@ def registrar_eliminacion(instance, modelo_nombre):
     _registrar(instance, 'eliminar', modelo_nombre)
 
 
-# ── Signals ──────────────────────────────────────────────────────────────────
+# ── Signals definidos a nivel de módulo para evitar recolección por GC ────────
 
 def conectar_signals():
     from apps.facturacion.models import Factura
@@ -41,30 +40,38 @@ def conectar_signals():
     from apps.nomina.models import Empleado
     from apps.contabilidad.models import AsientoContable
 
-    @receiver(post_save, sender=Factura, dispatch_uid='audit_factura_save')
-    def audit_factura(sender, instance, created, **kwargs):
-        registrar_auditoria(instance, created, 'Factura')
+    post_save.connect(_audit_factura, sender=Factura, dispatch_uid='audit_factura_save', weak=False)
+    pre_delete.connect(_audit_factura_delete, sender=Factura, dispatch_uid='audit_factura_delete', weak=False)
+    post_save.connect(_audit_tercero, sender=Tercero, dispatch_uid='audit_tercero_save', weak=False)
+    pre_delete.connect(_audit_tercero_delete, sender=Tercero, dispatch_uid='audit_tercero_delete', weak=False)
+    post_save.connect(_audit_producto, sender=Producto, dispatch_uid='audit_producto_save', weak=False)
+    post_save.connect(_audit_empleado, sender=Empleado, dispatch_uid='audit_empleado_save', weak=False)
+    post_save.connect(_audit_asiento, sender=AsientoContable, dispatch_uid='audit_asiento_save', weak=False)
 
-    @receiver(pre_delete, sender=Factura, dispatch_uid='audit_factura_delete')
-    def audit_factura_delete(sender, instance, **kwargs):
-        registrar_eliminacion(instance, 'Factura')
 
-    @receiver(post_save, sender=Tercero, dispatch_uid='audit_tercero_save')
-    def audit_tercero(sender, instance, created, **kwargs):
-        registrar_auditoria(instance, created, 'Tercero')
+def _audit_factura(sender, instance, created, **kwargs):
+    registrar_auditoria(instance, created, 'Factura')
 
-    @receiver(pre_delete, sender=Tercero, dispatch_uid='audit_tercero_delete')
-    def audit_tercero_delete(sender, instance, **kwargs):
-        registrar_eliminacion(instance, 'Tercero')
 
-    @receiver(post_save, sender=Producto, dispatch_uid='audit_producto_save')
-    def audit_producto(sender, instance, created, **kwargs):
-        registrar_auditoria(instance, created, 'Producto')
+def _audit_factura_delete(sender, instance, **kwargs):
+    registrar_eliminacion(instance, 'Factura')
 
-    @receiver(post_save, sender=Empleado, dispatch_uid='audit_empleado_save')
-    def audit_empleado(sender, instance, created, **kwargs):
-        registrar_auditoria(instance, created, 'Empleado')
 
-    @receiver(post_save, sender=AsientoContable, dispatch_uid='audit_asiento_save')
-    def audit_asiento(sender, instance, created, **kwargs):
-        registrar_auditoria(instance, created, 'AsientoContable')
+def _audit_tercero(sender, instance, created, **kwargs):
+    registrar_auditoria(instance, created, 'Tercero')
+
+
+def _audit_tercero_delete(sender, instance, **kwargs):
+    registrar_eliminacion(instance, 'Tercero')
+
+
+def _audit_producto(sender, instance, created, **kwargs):
+    registrar_auditoria(instance, created, 'Producto')
+
+
+def _audit_empleado(sender, instance, created, **kwargs):
+    registrar_auditoria(instance, created, 'Empleado')
+
+
+def _audit_asiento(sender, instance, created, **kwargs):
+    registrar_auditoria(instance, created, 'AsientoContable')
