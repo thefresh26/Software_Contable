@@ -76,6 +76,7 @@ def importar_extracto(archivo, cuenta, saldo_inicial=Decimal('0')):
     total_creditos = sum((f['creditos'] for f in filas), Decimal('0'))
 
     extracto = ExtractoBancario.objects.create(
+        empresa=cuenta.empresa,
         cuenta=cuenta,
         periodo_inicio=min(fechas),
         periodo_fin=max(fechas),

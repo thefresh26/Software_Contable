@@ -24,6 +24,7 @@ def generar_asiento_depreciacion(activo, periodo, valor_dep):
         return None
 
     asiento = AsientoContable.objects.create(
+        empresa=activo.empresa,
         fecha=periodo,
         descripcion=f'Depreciación {periodo.strftime("%Y-%m")} — {activo.codigo} {activo.nombre}',
         es_manual=False,
@@ -100,6 +101,7 @@ def generar_asiento_baja(activo, fecha, valor_venta):
     valor_venta = Decimal(str(valor_venta))
 
     asiento = AsientoContable.objects.create(
+        empresa=activo.empresa,
         fecha=fecha,
         descripcion=f'Baja de activo {activo.codigo} — {activo.nombre}',
         es_manual=False,

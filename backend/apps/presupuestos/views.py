@@ -63,6 +63,7 @@ class CotizacionViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
             return Response({'error': 'Solo se pueden convertir cotizaciones aprobadas.'}, status=400)
         with transaction.atomic():
             factura = Factura.objects.create(
+                empresa=cot.empresa,
                 tipo='FV',
                 tercero=cot.tercero,
                 fecha=datetime.date.today(),

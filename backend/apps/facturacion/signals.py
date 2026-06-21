@@ -69,6 +69,7 @@ def generar_asiento_factura_venta(factura):
         return
 
     asiento = AsientoContable.objects.create(
+        empresa=factura.empresa,
         fecha=factura.fecha,
         descripcion=f'Factura de venta {factura.numero} — {factura.tercero}',
         factura=factura, es_manual=False,
@@ -97,6 +98,7 @@ def generar_asiento_factura_compra(factura):
     neto_pagar = factura.total - total_retenciones
 
     asiento = AsientoContable.objects.create(
+        empresa=factura.empresa,
         fecha=factura.fecha,
         descripcion=f'Factura de compra {factura.numero} — {factura.tercero}',
         factura=factura, es_manual=False,
@@ -150,6 +152,7 @@ def crear_cuenta_cobrar(factura):
         CuentaPorCobrar.objects.get_or_create(
             factura=factura,
             defaults=dict(
+                empresa=factura.empresa,
                 tercero=factura.tercero,
                 valor_total=factura.total,
                 valor_pendiente=factura.total,
@@ -171,6 +174,7 @@ def crear_cuenta_pagar(factura):
         CuentaPorPagar.objects.get_or_create(
             factura=factura,
             defaults=dict(
+                empresa=factura.empresa,
                 tercero=factura.tercero,
                 valor_total=neto,
                 valor_pendiente=neto,
