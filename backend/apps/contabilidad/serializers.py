@@ -9,7 +9,7 @@ class FlujoCajaSerializer(serializers.ModelSerializer):
     class Meta:
         model = FlujoCaja
         fields = '__all__'
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'empresa', 'created_at']
 
 
 class CierrePeriodoSerializer(serializers.ModelSerializer):
@@ -20,7 +20,7 @@ class CierrePeriodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CierrePeriodo
         fields = '__all__'
-        read_only_fields = ['id', 'cerrado_por', 'cerrado_at', 'estado']
+        read_only_fields = ['id', 'empresa', 'cerrado_por', 'cerrado_at', 'estado']
 
     def get_periodo_fin(self, obj):
         return obj.periodo_fin()
@@ -32,7 +32,7 @@ class CentroCostoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CentroCosto
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'empresa']
 
 
 class CuentaPUCSerializer(serializers.ModelSerializer):
@@ -42,7 +42,7 @@ class CuentaPUCSerializer(serializers.ModelSerializer):
     class Meta:
         model = CuentaPUC
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'empresa']
 
 
 class MovimientoContableSerializer(serializers.ModelSerializer):
@@ -69,7 +69,7 @@ class AsientoContableSerializer(serializers.ModelSerializer):
     class Meta:
         model = AsientoContable
         fields = '__all__'
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'empresa', 'created_at']
 
 
 class AsientoContableCreateSerializer(serializers.ModelSerializer):
@@ -79,7 +79,7 @@ class AsientoContableCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = AsientoContable
         fields = '__all__'
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'empresa', 'created_at']
 
     def validate(self, data):
         movimientos = data.get('movimientos', [])

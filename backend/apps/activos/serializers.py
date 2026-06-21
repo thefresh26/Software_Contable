@@ -10,6 +10,7 @@ class CategoriaActivoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CategoriaActivo
         fields = '__all__'
+        read_only_fields = ['id', 'empresa']
 
 
 class ActivoFijoSerializer(serializers.ModelSerializer):
@@ -20,7 +21,7 @@ class ActivoFijoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActivoFijo
         fields = '__all__'
-        read_only_fields = ['id', 'valor_depreciado_acumulado', 'valor_en_libros', 'estado', 'created_at']
+        read_only_fields = ['id', 'empresa', 'valor_depreciado_acumulado', 'valor_en_libros', 'estado', 'created_at']
 
 
 class ActivoFijoCreateSerializer(serializers.ModelSerializer):

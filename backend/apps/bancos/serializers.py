@@ -15,7 +15,7 @@ class CuentaBancariaSerializer(serializers.ModelSerializer):
     class Meta:
         model = CuentaBancaria
         fields = '__all__'
-        read_only_fields = ['id', 'created_at', 'saldo_actual']
+        read_only_fields = ['id', 'empresa', 'created_at', 'saldo_actual']
 
 
 class MovimientoBancarioSerializer(serializers.ModelSerializer):
@@ -35,7 +35,7 @@ class ExtractoBancarioSerializer(serializers.ModelSerializer):
         model = ExtractoBancario
         fields = '__all__'
         read_only_fields = [
-            'id', 'created_at', 'estado',
+            'id', 'empresa', 'created_at', 'estado',
             'periodo_inicio', 'periodo_fin', 'saldo_final_extracto',
             'total_debitos', 'total_creditos', 'archivo_original',
         ]
@@ -73,7 +73,7 @@ class ConciliacionBancariaSerializer(serializers.ModelSerializer):
         model = ConciliacionBancaria
         fields = '__all__'
         read_only_fields = [
-            'id', 'created_at', 'finalizada_at', 'estado',
+            'id', 'empresa', 'created_at', 'finalizada_at', 'estado',
             'saldo_extracto', 'saldo_libros', 'diferencia',
         ]
 

@@ -18,7 +18,7 @@ class CotizacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cotizacion
         fields = '__all__'
-        read_only_fields = ['id', 'numero', 'subtotal', 'iva', 'total', 'created_at']
+        read_only_fields = ['id', 'empresa', 'numero', 'subtotal', 'iva', 'total', 'created_at']
 
 
 class DetalleCotizacionInputSerializer(serializers.ModelSerializer):
@@ -67,7 +67,7 @@ class PresupuestoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Presupuesto
         fields = '__all__'
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'empresa', 'created_at']
 
     def get_items(self, obj):
         return ItemPresupuestoSerializer(obj.items.all(), many=True).data

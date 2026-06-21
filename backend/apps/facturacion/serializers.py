@@ -20,7 +20,7 @@ class AnticipoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anticipo
         fields = '__all__'
-        read_only_fields = ['id', 'valor_aplicado', 'valor_disponible', 'estado', 'created_at']
+        read_only_fields = ['id', 'empresa', 'valor_aplicado', 'valor_disponible', 'estado', 'created_at']
 
 
 class ResolucionDIANSerializer(serializers.ModelSerializer):
@@ -31,7 +31,7 @@ class ResolucionDIANSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResolucionDIAN
         fields = '__all__'
-        read_only_fields = ['id', 'consecutivo_actual', 'created_at']
+        read_only_fields = ['id', 'empresa', 'consecutivo_actual', 'created_at']
 
     def get_porcentaje_uso(self, obj):
         return obj.porcentaje_uso()
@@ -84,7 +84,7 @@ class FacturaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Factura
         fields = '__all__'
-        read_only_fields = ['id', 'numero', 'subtotal', 'iva', 'descuento', 'total', 'estado', 'created_at']
+        read_only_fields = ['id', 'empresa', 'numero', 'subtotal', 'iva', 'descuento', 'total', 'estado', 'created_at']
 
 
 class RetencionInputSerializer(serializers.Serializer):

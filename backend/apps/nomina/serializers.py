@@ -8,7 +8,7 @@ class EmpleadoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Empleado
         fields = '__all__'
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'empresa', 'created_at']
 
 
 class LiquidacionNominaSerializer(serializers.ModelSerializer):

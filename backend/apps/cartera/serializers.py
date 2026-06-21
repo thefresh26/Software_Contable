@@ -31,7 +31,7 @@ class CuentaPorCobrarSerializer(serializers.ModelSerializer):
     class Meta:
         model = CuentaPorCobrar
         fields = '__all__'
-        read_only_fields = ['id', 'created_at', 'valor_pagado', 'valor_pendiente', 'estado']
+        read_only_fields = ['id', 'empresa', 'created_at', 'valor_pagado', 'valor_pendiente', 'estado']
 
 
 class CuentaPorPagarSerializer(serializers.ModelSerializer):
@@ -42,7 +42,7 @@ class CuentaPorPagarSerializer(serializers.ModelSerializer):
     class Meta:
         model = CuentaPorPagar
         fields = '__all__'
-        read_only_fields = ['id', 'created_at', 'valor_pagado', 'valor_pendiente', 'estado']
+        read_only_fields = ['id', 'empresa', 'created_at', 'valor_pagado', 'valor_pendiente', 'estado']
 
 
 class RegistrarPagoSerializer(serializers.Serializer):
