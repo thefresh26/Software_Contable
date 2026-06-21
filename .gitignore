@@ -7,3 +7,4 @@ dist/
 *.log
 db.sqlite3
 media/
+qa_test_resultado.json
