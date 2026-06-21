@@ -453,12 +453,7 @@ class FlujoCajaViewSet(EmpresaFilterMixin, viewsets.ModelViewSet):
     filterset_fields = ['tipo', 'es_proyectado', 'cuenta_bancaria']
 
     def perform_create(self, serializer):
-        try:
-            serializer.save(empresa=getattr(self.request, 'empresa_activa', None))
-        except Exception as exc:
-            import traceback
-            from rest_framework.exceptions import APIException
-            raise APIException(detail=f"DIAG: {type(exc).__name__}: {exc}\n{traceback.format_exc()}")
+        serializer.save(empresa=getattr(self.request, 'empresa_activa', None))
 
     def get_queryset(self):
         qs = super().get_queryset()
